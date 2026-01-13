@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import EventsPage from './EventsPage';
 import { EVENTS_URL, fallbackImages } from './constants';
+import LoginPage from './LoginPage';
+import {useAuth} from './AuthContext';
 
 const heroSlides = [
     {
@@ -32,6 +34,8 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
     const [themeOn, setThemeOn] = useState(
         document.documentElement.classList.contains("dark")
     );
+    const {user,logout} = useAuth();
+
 
     function toggleTheme() {
         setThemeOn((prev) => {
@@ -53,17 +57,32 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
     const handleSearch = (event) => {
         event.preventDefault();
-        navigate('/search');
+        navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
     };
-
+    
+    const handleLogin = (event) => {
+        event.preventDefault();
+        navigate('/login');
+    }
     const featuredChoices = events.slice(0, 3);
 
     return (
         <div className="page">
             <section className="heading">
-                <button type="button" className="ghost-btn" >
+                <div className="eyebrow">
+            {user ? (
+                <>
+                    Zalogowany jako <b>{user.username}</b> <space></space>
+                    <button type="button" className="ghost-btn" onClick={logout}>Wyloguj</button>
+                </>
+            ):(
+                <button type="button" className="ghost-btn" onClick={handleLogin}>
                     logowanie
                 </button>
+            )
+            }
+                </div>
+                
                 <section className="buttons-sth">  
                     <button type="button" className="ghost-btn">
                         ENG/PL
@@ -167,7 +186,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                 ) : featuredChoices.length ? (
                     <div className="choice-grid">
                         {featuredChoices.map((choice) => (
-                            <article key={choice.title} className="choice-card">
+                            <article key={choice.id} className="choice-card">
                                 <div
                                     className="choice-image"
                                     style={{ backgroundImage: `url(${choice.image})` }}
@@ -213,13 +232,12 @@ function App() {
                     throw new Error('Unexpected response shape');
                 }
                 const entries = Object.entries(data);
-                const mapped = entries.map(([title, blurb], idx) => ({
-                    title: title || `Choice ${idx + 1}`,
-                    blurb:
-                        typeof blurb === 'string' && blurb.trim()
-                            ? blurb
-                            : 'Details coming soon.',
+                const mapped = entries.map(([key, ev], idx) => ({
+                    id: key,
+                    title: ev.miejsce,
+                    blurb: `${ev.rodzaj} - ${ev.data}`,
                     image: fallbackImages[idx % fallbackImages.length],
+                    raw: ev,
                 }));
                 setEvents(mapped);
                 setEventsError('');
@@ -251,6 +269,8 @@ function App() {
                 }
             />
             <Route path="/search" element={<EventsPage />} />
+            
+            <Route path="/login" element={<LoginPage />} />
         </Routes>
     );
 }

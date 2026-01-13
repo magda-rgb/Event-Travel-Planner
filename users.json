@@ -1,0 +1,17 @@
+{
+    "jasiu": {
+        "username": "jasiu",
+        "fullname": "Jan Kowalski",
+        "email": "jasiu@example.com",
+        "hashed_password": "hashpassword",
+        "disabled": "False"
+    },
+
+    "stasiu": {
+        "username": "stasiu",
+        "fullname": "Stanisław Nowak",
+        "email": "stasiu@example.com",
+        "hashed_password": "hashpassword",
+        "disabled": "True"
+    }
+}

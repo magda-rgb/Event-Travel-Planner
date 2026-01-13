@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { SEARCH_URL, fallbackImages } from './constants';
 import {useLocation} from "react-router-dom";
 
-function EventsPage() {
+function OneEventsPages() {
     const [events, setEvents] = useState([]);
     const [isLoadingEvents, setIsLoadingEvents] = useState(true);
     const [eventsError, setEventsError] = useState('');
@@ -88,4 +88,4 @@ function EventsPage() {
     );
 }
 
-export default EventsPage;
+export default OneEventPage;

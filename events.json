@@ -1,0 +1,32 @@
+{
+    "event1": {
+        "miejsce": "Warszawa, Stadion Narodowy",
+        "data": "2026-02-14",
+        "rodzaj": "koncert",
+        "organizator": "LiveNation"
+    },
+    "event2": {
+        "miejsce": "Kraków, Expo",
+        "data": "2026-03-10",
+        "rodzaj": "targi",
+        "organizator": "TechPolska"
+    },
+    "event3": {
+        "miejsce": "Warszawa",
+        "data": "2026-04-19",
+        "rodzaj": "sport",
+        "organizator": "Miasto Warszawa"
+    },
+    "event4": {
+        "miejsce": "Wrocław, Hala Stulecia",
+        "data": "2026-05-05",
+        "rodzaj": "konferencja",
+        "organizator": "AI Future"
+    },
+    "event5": {
+        "miejsce": "Gdynia",
+        "data": "2026-06-20",
+        "rodzaj": "festiwal",
+        "organizator": "Polski Instytut Filmowy"
+    }
+}
