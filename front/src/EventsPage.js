@@ -1,13 +1,32 @@
 import { useEffect, useState } from 'react';
-import { SEARCH_URL, fallbackImages } from './constants';
-import {useLocation} from "react-router-dom";
+import {SEARCH_URL, fallbackImages, eventImageIndex} from './constants';
+import {useLocation, useNavigate} from "react-router-dom";
+import {useAuth} from "./AuthContext";
+
 
 function EventsPage() {
     const [events, setEvents] = useState([]);
     const [isLoadingEvents, setIsLoadingEvents] = useState(true);
     const [eventsError, setEventsError] = useState('');
+    const navigate = useNavigate();
+    const image = fallbackImages[eventImageIndex[events.rodzaj] ?? 0];
+
+
     const {search} =useLocation();
     const searchTerm = new URLSearchParams(search).get("q");
+    const [themeOn, setThemeOn] = useState(
+        document.documentElement.classList.contains("dark")
+    );
+    const {user,logout} = useAuth();
+
+    function toggleTheme() {
+        setThemeOn((prev) => {
+            const next = !prev;
+            document.documentElement.classList.toggle("dark", next);
+            localStorage.theme = next ? "dark" : "light";
+            return next;
+        });
+    }
 
     useEffect(() => {
         let isMounted = true;
@@ -28,8 +47,7 @@ function EventsPage() {
                     id: key,
                     title: ev.miejsce,
                     blurb: `${ev.rodzaj}-${ev.data}`,
-                    image: fallbackImages[idx % fallbackImages.length],
-                    raw:ev,
+                    rodzaj: ev.rodzaj
                 }));
                 setEvents(mapped);
                 setEventsError('');
@@ -47,9 +65,36 @@ function EventsPage() {
             isMounted = false;
         };
     }, []);
+    
+    const handleOneEvent = (id) => {
+        navigate(`/event?q=${encodeURIComponent(id)}`);
+    };
 
     return (
         <div className="page">
+            <section className="heading">
+                <button
+                    type="button"
+                    className="ghost-btn"
+                    onClick={() => navigate(-1)}>
+                    Back
+                </button>
+                <section className="buttons-sth">
+                    <button type="button" className="ghost-btn">
+                        ENG/PL
+                    </button>
+
+                    <button
+                        type="button"
+                        className={`toggle ${themeOn ? "is-on" : ""}`}
+                        onClick={toggleTheme}
+                        aria-label="Motyw"
+                    >
+                        <span className="toggle-knob" />
+                    </button>
+
+                </section>
+            </section>
             <section className="events-page">
                 <header className="section-header">
                     <p className="eyebrow">All events</p>
@@ -66,14 +111,21 @@ function EventsPage() {
                             <article key={event.id} className="choice-card">
                                 <div
                                     className="choice-image"
-                                    style={{ backgroundImage: `url(${event.image})` }}
+                                    style={{ backgroundImage: `url(${
+                                            fallbackImages[
+                                            eventImageIndex[(event.rodzaj || "").trim().toLowerCase()] ?? 0
+                                                ]
+                                    })` }}                                    
                                     role="img"
                                     aria-label={event.title}
                                 />
                                 <div className="choice-body">
                                     <h3>{event.title}</h3>
                                     <p>{event.blurb}</p>
-                                    <button type="button" className="ghost-btn">
+                                    <button 
+                                        type="button" 
+                                        className="ghost-btn" 
+                                        onClick={() => handleOneEvent(event.id)}>
                                         View details
                                     </button>
                                 </div>

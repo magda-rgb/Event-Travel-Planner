@@ -34,7 +34,7 @@
   --text2: rgba(15, 23, 42, 0.6);
   --muted: #64748b; /* slate-500 */
 
-  --accent: #2563eb; /* niebieski pasujący do #66d9e8 */
+  --accent: #7a91d6; /* niebieski pasujący do #66d9e8 */
   --border-btn: rgba(62, 60, 60, 0.08);
 
 }
@@ -84,8 +84,10 @@
   width: 56px;
   height: 30px;
   border-radius: 999px;
-  background: #2563eb;
+  background: #7a91d6;
+  /*
   border: 1px solid #2563eb;
+  */
   padding: 3px;
   box-sizing: border-box;
 
@@ -124,6 +126,7 @@
   overflow: hidden;
   background: #0c0e13;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  color: #e4dddd;
 }
 
 
@@ -180,7 +183,7 @@ h1 {
 
 .description {
   margin: 0;
-  color: var(--muted);
+  color: #9ba3b4; 
   font-size: 16px;
   line-height: 1.5;
 }
@@ -198,7 +201,7 @@ h1 {
 .controls button {
   border: none;
   background: rgba(12, 14, 19, 0.65);
-  color: var(--text);
+  color: white;
   width: 44px;
   height: 44px;
   border-radius: 999px;
@@ -455,7 +458,7 @@ h1 {
 .login{
   display: flex;
   flex-direction: column;
-  width: min(720px, 100%);
+  width: min(1500px, 150%);
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 16px;

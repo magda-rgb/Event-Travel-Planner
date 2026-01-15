@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import EventsPage from './EventsPage';
-import { EVENTS_URL, fallbackImages } from './constants';
+import { EVENTS_URL, fallbackImages, eventImageIndex  } from './constants';
 import LoginPage from './LoginPage';
 import {useAuth} from './AuthContext';
+import OneEventPage from "./OneEventPage";
 
 const heroSlides = [
     {
@@ -65,6 +66,10 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         navigate('/login');
     }
     const featuredChoices = events.slice(0, 3);
+    
+    const handleOneEvent = (id) => {
+        navigate(`/events/${encodeURIComponent(id)}`)
+    };
 
     return (
         <div className="page">
@@ -189,14 +194,19 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                             <article key={choice.id} className="choice-card">
                                 <div
                                     className="choice-image"
-                                    style={{ backgroundImage: `url(${choice.image})` }}
+                                    style={{ backgroundImage: `url(${
+                                            fallbackImages[eventImageIndex[choice.rodzaj] ?? 0]
+                                        })` }}
                                     role="img"
                                     aria-label={choice.title}
                                 />
                                 <div className="choice-body">
                                     <h3>{choice.title}</h3>
                                     <p>{choice.blurb}</p>
-                                    <button type="button" className="ghost-btn">
+                                    <button 
+                                        type="button" 
+                                        className="ghost-btn"
+                                    onClick={() => handleOneEvent(choice.id)}>
                                         Learn more
                                     </button>
                                 </div>
@@ -236,8 +246,9 @@ function App() {
                     id: key,
                     title: ev.miejsce,
                     blurb: `${ev.rodzaj} - ${ev.data}`,
-                    image: fallbackImages[idx % fallbackImages.length],
-                    raw: ev,
+                    rodzaj: ev.rodzaj
+
+
                 }));
                 setEvents(mapped);
                 setEventsError('');
@@ -271,6 +282,8 @@ function App() {
             <Route path="/search" element={<EventsPage />} />
             
             <Route path="/login" element={<LoginPage />} />
+            
+            <Route path="/event" element={<OneEventPage/>} />
         </Routes>
     );
 }

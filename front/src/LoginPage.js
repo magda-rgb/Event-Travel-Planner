@@ -2,11 +2,25 @@ import { useState } from 'react';
 import {LOGIN_URL} from "./constants";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "./AuthContext";
+
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const {login} = useAuth();
+    const [themeOn, setThemeOn] = useState(
+        document.documentElement.classList.contains("dark")
+    );
+    const {user,logout} = useAuth();
+    
+    function toggleTheme() {
+        setThemeOn((prev) => {
+            const next = !prev;
+            document.documentElement.classList.toggle("dark", next);
+            localStorage.theme = next ? "dark" : "light";
+            return next;
+        });
+    }
     
     async function handleLogin(e) {
         e.preventDefault();
@@ -36,6 +50,30 @@ function LoginPage() {
     }
     
     return (
+        <div className="page">
+            <section className="heading">
+                <button
+                    type="button"
+                    className="ghost-btn"
+                    onClick={() => navigate(-1)}>
+                    Back
+                </button>
+                <section className="buttons-sth">
+                    <button type="button" className="ghost-btn">
+                        ENG/PL
+                    </button>
+
+                    <button
+                        type="button"
+                        className={`toggle ${themeOn ? "is-on" : ""}`}
+                        onClick={toggleTheme}
+                        aria-label="Motyw"
+                    >
+                        <span className="toggle-knob" />
+                    </button>
+
+                </section>
+            </section>
         <section className="login-card">
         <div className="login">
         <form onSubmit={handleLogin} className="login-form-space">
@@ -61,6 +99,7 @@ function LoginPage() {
         </form>
         </div>
         </section>
+        </div>
     )
 }
 export default LoginPage;

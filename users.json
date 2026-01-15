@@ -1,17 +1,23 @@
 {
-    "jasiu": {
-        "username": "jasiu",
-        "fullname": "Jan Kowalski",
-        "email": "jasiu@example.com",
-        "hashed_password": "hashpassword",
-        "disabled": "False"
-    },
-
-    "stasiu": {
-        "username": "stasiu",
-        "fullname": "Stanisław Nowak",
-        "email": "stasiu@example.com",
-        "hashed_password": "hashpassword",
-        "disabled": "True"
-    }
+  "jasiu": {
+    "username": "jasiu",
+    "fullname": "Jan Kowalski",
+    "email": "jasiu@example.com",
+    "hashed_password": "hashpassword",
+    "disabled": "False"
+  },
+  "stasiu": {
+    "username": "stasiu",
+    "fullname": "Stanis\u0142aw Nowak",
+    "email": "stasiu@example.com",
+    "hashed_password": "hashpassword",
+    "disabled": "True"
+  },
+  "ktos": {
+    "username": "ktoktosiowy",
+    "fullname": "string",
+    "email": "string",
+    "disabled": false,
+    "hashed_password": "hashstring"
+  }
 }
