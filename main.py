@@ -1,39 +1,52 @@
 import json
-from typing import Annotated, Dict, Any
+from typing import Annotated, Dict, Any, Optional
 
 from fastapi import FastAPI, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pygments.lexers import data
 
 app= FastAPI()
 
+USERS_FILE = "users.json"
+EVENTS_FILE = "events.json"
+
+def load_users() -> Dict[str, Dict[str, Any]]:
+    with open(USERS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_users(users: Dict[str, Dict[str, Any]]):
+    with open(USERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(users, f, indent=2)
+
+def load_events() -> Dict[str, Dict[str, Any]]:
+    with open(EVENTS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_events(events: Dict[str, Dict[str, Any]]):
+    with open(EVENTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(events, f, indent=2)
 
 def fake_hash_password(password:str):
     return "hash" + password
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
-class User(BaseModel):
+# Models
+class UserInput(BaseModel):
     username: str
     password: str
-    fullname: str | None = None
-    email: str | None = None
-    disabled: bool | None = None
+    fullname: Optional[str] = None
+    email: Optional[str] = None
 
-class UserInDB(User):
+class UserInDB(BaseModel):
+    username: str
+    fullname: Optional[str] = None
+    email: Optional[str] = None
+    disabled: bool = False
     hashed_password: str
 
-def match_user(db,username:str) -> bool:
-    return username in db
-
-def get_user(db, username:str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
-
+#CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -42,13 +55,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def fake_decode_token(token):
-    with open("users.json", "r", encoding="utf-8") as fx:
-        fake_users_db: Dict[str, Dict[str, Any]] = json.load(fx)
-    user = get_user(fake_users_db, token)
-    return user
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_user_by_id(db: Dict[str, Dict[str, Any]], user_id: str):
+    user_dict = db.get(user_id)
+    if not user_dict:
+        return None
+    return UserInDB(**user_dict)
+
+def find_user_id_by_username(db: Dict[str, Dict[str, Any]], username: str) -> Optional[str]:
+    return next((uid for uid, u in db.items() if u.get("username") == username), None)
+
+def username_taken(db: Dict[str, Dict[str, Any]], username: str) -> bool:
+    _, u = get_user_by_username(db, username)
+    return u is not None
+
+def get_user_by_username(db, username:str):
+    for user_id, user_dict in db.items():
+        if user_dict.get("username") == username:
+            return user_id, UserInDB(**user_dict)
+    return None, None
+
+def fake_decode_token(token: str) -> Optional[UserInDB]:
+    db = load_users()
+    return get_user_by_id(db, token)
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserInDB:
     user = fake_decode_token(token)
     if not user:
         raise HTTPException(
@@ -59,8 +90,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     return user
 
 async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_user)],
-):
+        current_user: Annotated[UserInDB, Depends(get_current_user)],
+) -> UserInDB:
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
@@ -73,121 +104,116 @@ def matches(event_name:str, data: Dict[str, Any], q: str) -> bool:
         str(data.get("rodzaj","")),
         str(data.get("organizator","")),
     ]).lower()
-
     return q in haystack
 
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    with open("users.json", "r", encoding="utf-8") as fx:
-        fake_users_db: Dict[str, Dict[str, Any]] = json.load(fx)
-    user_dict=fake_users_db.get(form_data.username)
-    if not user_dict:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    user= UserInDB(**user_dict)
-    hashed_password = fake_hash_password(form_data.password)
-    if not hashed_password == user.hashed_password:
+    db = load_users()
+
+    user_id = find_user_id_by_username(db, form_data.username)
+    if not user_id:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-    return {"access_token": user.username, "token_type": "bearer"}
+    user = UserInDB(**db[user_id])
+    if fake_hash_password(form_data.password) != user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-@app.get("/users/me")
-async def read_users_me(
-        current_user: Annotated[User, Depends(get_current_user)]
-):
-    return current_user
+    return {"access_token": user_id, "token_type": "bearer"}
+
+@app.get("/user")
+async def read_user_me(current_user: Annotated[UserInDB, Depends(get_current_active_user)]):
+    data = current_user.model_dump()
+    data.pop("hashed_password", None)
+    return data
 
 @app.get("/events")
 async def read_events():
-    with open("events.json", "r", encoding="utf-8") as f:
-        events: Dict[str, Dict[str, Any]] = json.load(f)
-    return events
-
-@app.get("/search")
-async def read_search():
-    with open("events.json", "r", encoding="utf-8") as f:
-        events: Dict[str, Dict[str, Any]] = json.load(f)
-    return events
+    return load_events()
 
 @app.get("/events/search")
-async def read_events_search(q: str =Query(...,min_lenght=1)):
+async def read_events_search(q: str =Query(...,min_length=1)):
     q_norm = q.strip().lower()
-    with open("events.json", "r", encoding="utf-8") as f:
-        events: Dict[str, Dict[str, Any]] = json.load(f)
+    events = load_events()
 
     filtered_events = {
         name: data
         for name, data in events.items()
         if matches(name,data, q_norm)
     }
-
     return filtered_events
 
 @app.get("/event")
-async def read_one_event(q: str =Query(...,min_lenght=1)):
-    with open("events.json", "r", encoding="utf-8") as f:
-        events: Dict[str, Dict[str, Any]] = json.load(f)
+async def read_one_event(q: str = Query(..., min_length=1)):
+    events = load_events()
     event = events.get(q)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     return event
 
 @app.post("/register")
-async def regidter(user: User):
-    with open("users.json", "r", encoding="utf-8") as fx:
-        fake_users_db: Dict[str, Dict[str, Any]] = json.load(fx)
-    if match_user(fake_users_db, user.username):
-        raise HTTPException(status_code=400, detail="Username already exists")
+async def register_user(user: UserInput):
+    db = load_users()
 
-    hashed = fake_hash_password(user.password)
+    if username_taken(db, user.username):
+        raise HTTPException(status_code=400, detail="Username already registered")
 
-    fake_users_db[user.username] = {
+    new_id = str(max([int(k) for k in db.keys()]+[0]) + 1)
+
+    db[new_id] = {
         "username": user.username,
         "fullname": user.fullname,
         "email": user.email,
         "disabled": False,
-        "hashed_password": hashed,
+        "hashed_password": fake_hash_password(user.password),
     }
 
-    with open("users.json", "w", encoding="utf-8") as fy:
-        json.dump(fake_users_db, fy, indent=2)
-
-    return {"status": "User registered successfully"}
+    save_users(db)
+    return {"status": "User registered successfully", "user_id": new_id}
 
 @app.delete("/delete_user")
-async def delete_user(username: str):
-    with open("users.json", "r", encoding="utf-8") as fx:
-        fake_users_db: Dict[str, Dict[str, Any]] = json.load(fx)
-    if not match_user(fake_users_db, username):
-        raise HTTPException(status_code=404, detail="Username not found")
+async def delete_user(password: str, token: Annotated[str, Depends(oauth2_scheme)]):
+    db = load_users()
 
-    del fake_users_db[username]
+    user_id = token
+    if not user_id:
+        raise HTTPException(status_code=404, detail="User not found")
 
-    with open("users.json", "w", encoding="utf-8") as fz:
-        json.dump(fake_users_db, fz, indent=2)
+    user = db[user_id]
+    if fake_hash_password(password) != user.get("hashed_password"):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+
+    del db[user_id]
+    save_users(db)
 
     return {"status": "User deleted successfully"}
 
 @app.put("/update_user")
-async def update_user(username: str, user: User):
-    with open("users.json", "r", encoding="utf-8") as fx:
-        fake_users_db: Dict[str, Dict[str, Any]] = json.load(fx)
-    if not match_user(fake_users_db, username):
-        raise HTTPException(status_code=404, detail="Username not found")
+async def update_user(
+        token: Annotated[str, Depends(oauth2_scheme)],
+        username: Optional[str] = None,
+        fullname: Optional[str] = None,
+        email: Optional[str] = None,
+        password: Optional[str] = None,
+):
+    db = load_users()
 
-    hashed = fake_hash_password(user.password)
+    user_id = token
+    if user_id not in db:
+        raise HTTPException(status_code=404, detail="User not found")
 
-    fake_users_db[username] = {
-        "username": user.username,
-        "fullname": user.fullname,
-        "email": user.email,
-        "disabled": False,
-        "hashed_password": hashed,
-    }
+    user = db[user_id]
 
-    with open("users.json", "w", encoding="utf-8") as fy:
-        json.dump(fake_users_db, fy, indent=2)
+    if username:
+        user["username"] = username
+    if fullname:
+        user["fullname"] = fullname
+    if email:
+        user["email"] = email
+    if password:
+        user["hashed_password"] = fake_hash_password(password)
+
+    db[user_id] = user
+    save_users(db)
 
     return {"status": "User updated successfully"}
-
-

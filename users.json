@@ -1,23 +1,30 @@
 {
-  "jasiu": {
+  "1": {
     "username": "jasiu",
     "fullname": "Jan Kowalski",
     "email": "jasiu@example.com",
     "hashed_password": "hashpassword",
     "disabled": "False"
   },
-  "stasiu": {
+  "2": {
     "username": "stasiu",
     "fullname": "Stanis\u0142aw Nowak",
     "email": "stasiu@example.com",
     "hashed_password": "hashpassword",
     "disabled": "True"
   },
-  "ktos": {
+  "3": {
     "username": "ktoktosiowy",
     "fullname": "string",
     "email": "string",
     "disabled": false,
     "hashed_password": "hashstring"
+  },
+  "4": {
+    "username": "login",
+    "fullname": "login nielogin",
+    "email": "login@login.pl",
+    "disabled": false,
+    "hashed_password": "hashloginpass"
   }
 }

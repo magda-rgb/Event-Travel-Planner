@@ -5,6 +5,7 @@ import { EVENTS_URL, fallbackImages, eventImageIndex  } from './constants';
 import LoginPage from './LoginPage';
 import {useAuth} from './AuthContext';
 import OneEventPage from "./OneEventPage";
+import RegisterUser from "./RegisterUser";
 
 const heroSlides = [
     {
@@ -65,6 +66,13 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         event.preventDefault();
         navigate('/login');
     }
+
+    const handleRegister = (event) => {
+        event.preventDefault();
+        navigate('/register');
+    }
+    
+    
     const featuredChoices = events.slice(0, 3);
     
     const handleOneEvent = (id) => {
@@ -81,11 +89,17 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     <button type="button" className="ghost-btn" onClick={logout}>Wyloguj</button>
                 </>
             ):(
+                <>
                 <button type="button" className="ghost-btn" onClick={handleLogin}>
                     logowanie
+                </button> 
+                    <space></space>
+                
+                <button type="button" className="ghost-btn" onClick={handleRegister}>
+                    Rejestracja
                 </button>
-            )
-            }
+                </>
+            )}
                 </div>
                 
                 <section className="buttons-sth">  
@@ -284,6 +298,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             
             <Route path="/event" element={<OneEventPage/>} />
+            
+            <Route path="/register" element={<RegisterUser />} />
         </Routes>
     );
 }
