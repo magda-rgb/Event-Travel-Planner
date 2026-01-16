@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import {LOGIN_URL} from "./constants";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useAuth} from "./AuthContext";
 
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from;
+    
     const {login} = useAuth();
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -47,7 +50,13 @@ function LoginPage() {
             }
 
             login(username, data.access_token);
-            navigate("/");
+            if (from){
+                navigate(from,{replace:true});
+            }
+            else
+            {
+                navigate("/", {replace:true});
+            }
         } catch (err) {
             setErrorMsg(err.message);
         }
