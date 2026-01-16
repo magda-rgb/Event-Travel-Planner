@@ -94,7 +94,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
             {user ? (
                 <>
                     <div className="login-name">
-                    Zalogowany jako <b>{user.username}</b>
+                    Zalogowany jako&nbsp; <b>{user.username}</b>
 
                     </div>
                     <button type="button" className="ghost-btn" onClick={logout}>Wyloguj</button>

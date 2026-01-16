@@ -135,95 +135,101 @@ function UserPage() {
                 </section>
                 </div>
             </section>
-            <section className="login-card">
-                <div className="login">
-                    <form onSubmit={handleChangeUser} className="login-form-space">
-                        <div className="eyebrow">
-                            <label className="login-form">UserName
-                                <input
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}/>
-                            </label>
-                        </div>
-                        <div className="eyebrow">
-                            <label className="login-form">fullname
-                                <input
-                                    type="text"
-                                    value={fullname}
-                                    onChange={(e) => setFullname(e.target.value)}/>
-                            </label>
-
-                            <label className="login-form">password
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}/>
-                            </label>
-
-                            <label className="login-form">email
-                                <input
-                                    type="text"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}/>
-                            </label>
-                        </div>
-                        <div className="eyebrow">
-
-                        </div>
-                        <div className="login-form">
-                            <button type="submit" >zmień dane</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-            <section>
-                <div>
-                    <h1>Profil użytkownika</h1>
-                    {userData ? (
-                        <section>
-                            <dl>
-                                <dt><b>Nazwa użytkownika</b></dt>
-                                <dd>{userData.username}</dd>
-
-                                <dt><b>Imie i nazwisko</b></dt>
-                                <dd>{userData.fullname}</dd>
-
-                                <dt><b>e-mail</b></dt>
-                                <dd>{userData.email}</dd>
-
-                                <dt><b>Status konta</b></dt>
-                                <dd>{userData.disabled ? "Zablokowane" : "Aktywne"}</dd>
-                            </dl>
-                        </section>
-                    ) : (
-                        <p>Ładowanie danych użytkownika</p>
-                    )}
-                </div>
-            </section>
             
-            
-            <section className="login-card">
-                <div className="login">
-                    <form onSubmit={handleDeleteUser} className="login-form-space">
-                        <div className="eyebrow">
-                            <label className="login-form">password
-                                <input
-                                    type="password"
-                                    value={deletePassword}
-                                    onChange={(e) => setDeletePassword(e.target.value)}/>
-                            </label>
-                            
-                        </div>
-                        <div className="eyebrow">
+            <section className="user-page">
+    
+                <section className="data-card">
+                    <div className="data">
+                        <form onSubmit={handleChangeUser} className="data-form-space">
+                            <div className="eyebrow">
+                                <label className="data-form">UserName
+                                    <input
+                                        type="text"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}/>
+                                </label>
+                            </div>
+                            <div className="eyebrow">
+                                <label className="data-form">fullname
+                                    <input
+                                        type="text"
+                                        value={fullname}
+                                        onChange={(e) => setFullname(e.target.value)}/>
+                                </label>
+    
+                                <label className="data-form">password
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}/>
+                                </label>
+    
+                                <label className="data-form">email
+                                    <input
+                                        type="text"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}/>
+                                </label>
+                            </div>
+                            <div className="eyebrow">
+    
+                            </div>
+                            <div className="data-form">
+                                <button type="submit" >zmień dane</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                <section className="profile-card">
+                    <div className="profile">
+                        <h1 className="eyebrow" style={{ fontSize: "20px" }}>Profil użytkownika</h1>
+                        {userData ? (
+                            <section>
+                                <dl>
+                                    <dt className="eyebrow-tw" ><b>Nazwa użytkownika</b></dt>
+                                    <dd>{userData.username}</dd>
+    
+                                    <dt className="eyebrow-tw"><b>Imie i nazwisko</b></dt>
+                                    <dd>{userData.fullname}</dd>
+    
+                                    <dt className="eyebrow-tw"><b>e-mail</b></dt>
+                                    <dd>{userData.email}</dd>
+    
+                                    <dt className="eyebrow-tw"><b>Status konta</b></dt>
+                                    <dd>{userData.disabled ? "Zablokowane" : "Aktywny"}</dd>
+                                </dl>
+                            </section>
+                        ) : (
+                            <p>Ładowanie danych użytkownika</p>
+                        )}
+                    </div>
+                </section>
+                <section className="delete-card">
+                    <div className="delete">
+                        <form onSubmit={handleDeleteUser} className="delete-form-space">
+                            <div className="eyebrow">
+                                <label className="delete-form">password
+                                    <input
+                                        type="password"
+                                        value={deletePassword}
+                                        onChange={(e) => setDeletePassword(e.target.value)}/>
+                                </label>
 
-                        </div>
-                        <div className="login-form">
-                            <button type="submit" >Usuń użytkowanika</button>
-                        </div>
-                    </form>
-                </div>
+                            </div>
+                            <div className="eyebrow">
+
+                            </div>
+                            <div className="delete-form">
+                                <button type="submit" >Usuń użytkowanika</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                
             </section>
+                
+                
+                
         </div>
     )
 }

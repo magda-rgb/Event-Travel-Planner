@@ -184,16 +184,24 @@
   gap: 12px;
 }
 
-.eyebrow {
+.eyebrow, .eyebrow-tw {
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--accent);
   font-size: 12px;
   font-weight: 600;
+}
+
+.eyebrow{
   margin: 0;
   margin-bottom: 16px;
-  
 }
+.eyebrow-tw{
+  margin: 0;
+  margin-bottom: -2px;
+  margin-top: 15px;
+}
+
 
 
 
@@ -443,10 +451,28 @@ h1 {
 }
 
 
+.user-page{
+  display: grid;
+  grid-template-columns: repeat(2, 560px);
+  justify-content: center;
+  align-items: start;
+}
+
+
+.data-card, .profile-card , .delete-card{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /*gap: 56px;*/
+}
 
 
 
-.login-card {
+.login-card { 
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 20px 64px;
@@ -470,14 +496,37 @@ h1 {
   font-size: 16px;
 }
 
-.login-form-space{
-  
+.data-form input {
+  display: flex;
+  gap: 50px;
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--input);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 16px;
+}
+
+.delete-form input {
+  display: flex;
+  gap: 50px;
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--input);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 16px;
+}
+
+.login-form-space, .data-form-space, .delete-form-space {
   gap: 15px;
   position: relative;
   
 }
 
-.login{
+.login, .profile, .data, .delete{
   display: flex;
   flex-direction: column;
   width: min(1500px, 150%);
@@ -493,7 +542,7 @@ h1 {
   margin-bottom: 50px;
 }
 
-.login-form {
+.login-form, .data-form, .delete-form {
   display: flex;
   flex-direction: column;
   margin-bottom: 18px;
@@ -531,5 +580,86 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+
+
+.data-form button {
+  border: none;
+  background: var(--accent);
+  color: #0c0e13;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 28px rgba(102, 217, 232, 0.28);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.data-form input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.data-form button:hover {
+  transform: translateX(-50%) translateY(-1px);
+}
+@media (max-width: 640px) {
+  .data-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1200px){
+  .user-page{
+    flex-direction: column;
+    align-items: center;
+  }
+  .data-card,
+  .profile-card{
+    width: min(350px, 100%);
+  }
+}
+
+
+
+
+.delete-form button {
+  border: none;
+  background: var(--accent);
+  color: #0c0e13;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 28px rgba(102, 217, 232, 0.28);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.delete-form input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.delete-form button:hover {
+  transform: translateX(-50%) translateY(-1px);
+}
+@media (max-width: 640px) {
+  .delete-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1200px){
+  .user-page{
+    grid-template-columns: 1fr;
+  }
+}
+
 
 
