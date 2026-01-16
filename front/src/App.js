@@ -58,6 +58,8 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         return () => clearInterval(id);
     }, [lastIndex]);
 
+    
+
     const handleSearch = (event) => {
         event.preventDefault();
         navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
@@ -81,9 +83,9 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
     
     
     const featuredChoices = events.slice(0, 3);
-    
+
     const handleOneEvent = (id) => {
-        navigate(`/events/${encodeURIComponent(id)}`)
+        navigate(`/event?q=${encodeURIComponent(id)}`)
     };
 
     return (

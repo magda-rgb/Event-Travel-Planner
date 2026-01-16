@@ -8,6 +8,9 @@ function LoginPage() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const {login} = useAuth();
+    const [errorMsg, setErrorMsg] = useState('');
+
+
     const [themeOn, setThemeOn] = useState(
         document.documentElement.classList.contains("dark")
     );
@@ -23,6 +26,8 @@ function LoginPage() {
     
     async function handleLogin(e) {
         e.preventDefault();
+        setErrorMsg("");
+
         try {
             const requestBody = {username: username, password: password};
             const response = await fetch(LOGIN_URL, {
@@ -33,19 +38,20 @@ function LoginPage() {
                     "Content-Type": "application/x-www-form-urlencoded",
                 }
             });
+            const data = await response.json().catch(() => ({}));
+
+
             if (!response.ok) {
-                throw new Error(response.statusText);
+                // FastAPI: {"detail": "..."}
+                const msg = data?.detail || "Nie udało się zalogować";
+                throw new Error(msg);
             }
-            
-            const data = await response.json();
-            
-            login(username, data.access_token)
-            
-            navigate('/');
-        } catch (error) {
-            console.error(error.message);
+
+            login(username, data.access_token);
+            navigate("/");
+        } catch (err) {
+            setErrorMsg(err.message);
         }
-      
     }
     
     return (
@@ -92,6 +98,9 @@ function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}/>
                 </label>
             </div>
+
+            {errorMsg && <div className="eyebrow">{errorMsg}</div>}
+
             <div className="login-form">
                 <button type="submit">Zaloguj</button>
             </div>
