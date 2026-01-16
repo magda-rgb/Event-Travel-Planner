@@ -71,12 +71,15 @@ function OneEventPage() {
     return (
         <div className="page">
             <section className="heading">
+                <div className="heading-one">
                 <button 
                     type="button" 
                     className="ghost-btn"
                     onClick={() => navigate(-1)}>
                     Back
                 </button>
+                </div>
+                <div className="heading-two">
                 <section className="buttons-sth">
                     <button type="button" className="ghost-btn">
                         ENG/PL
@@ -92,7 +95,9 @@ function OneEventPage() {
                     </button>
 
                 </section>
+                </div>
             </section>
+            <div>
             <section className="events-page">
                 <header className="section-header">
                     <p className="eyebrow">Wybrany event</p>
@@ -123,6 +128,7 @@ function OneEventPage() {
                     <p className="muted">No events available right now.</p>
                 )}
             </section>
+            </div>
         </div>
     );
 }

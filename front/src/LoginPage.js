@@ -11,7 +11,6 @@ function LoginPage() {
     const [themeOn, setThemeOn] = useState(
         document.documentElement.classList.contains("dark")
     );
-    const {user,logout} = useAuth();
     
     function toggleTheme() {
         setThemeOn((prev) => {
@@ -40,7 +39,7 @@ function LoginPage() {
             
             const data = await response.json();
             
-            login(username, data.acces_token)
+            login(username, data.access_token)
             
             navigate('/');
         } catch (error) {

@@ -6,23 +6,24 @@ import LoginPage from './LoginPage';
 import {useAuth} from './AuthContext';
 import OneEventPage from "./OneEventPage";
 import RegisterUser from "./RegisterUser";
+import UserPage from './UserPage';
 
 const heroSlides = [
     {
-        title: 'Discover art in the theater',
-        description: 'Sunrise beaches, salty breeze, and fresh coffee.',
+        title: 'Odkryj sztukę w teatrze',
+        description: 'Magia sceny, emocje na żywo i niezapomniane spektakle.',
         image:
             'https://images.unsplash.com/photo-1503095396549-807759245b35?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
     {
-        title: 'Discover music events',
-        description: 'Cool forest paths and weekend hikes with friends.',
+        title: 'Odkryj wydarzenia muzyczne',
+        description: 'Koncerty na żywo, festiwale i dźwięki, które poruszają.',
         image:
             'https://images.unsplash.com/photo-1522158637959-30385a09e0da?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
     {
-        title: 'Discover cultural events',
-        description: 'Skyline views, rooftop dinners, and live music.',
+        title: 'Odkryj wydarzenia kulturalne',
+        description: 'Spotkania ze sztuką, teatrem i kulturą na żywo.',
         image:
             'https://images.unsplash.com/photo-1533144169699-97ec15a75e92?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
@@ -72,6 +73,12 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         navigate('/register');
     }
     
+    const handleShowUser = (event) => {
+        event.preventDefault();
+        navigate('/user');
+    }
+    
+    
     
     const featuredChoices = events.slice(0, 3);
     
@@ -82,18 +89,23 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
     return (
         <div className="page">
             <section className="heading">
-                <div className="eyebrow">
+                <div className="heading-one">
+                    
             {user ? (
                 <>
-                    Zalogowany jako <b>{user.username}</b> <space></space>
+                    <div className="login-name">
+                    Zalogowany jako <b>{user.username}</b>
+
+                    </div>
                     <button type="button" className="ghost-btn" onClick={logout}>Wyloguj</button>
+                    
+                    <button type="button" className="ghost-btn" onClick={handleShowUser}>Moje dane</button>
                 </>
             ):(
                 <>
                 <button type="button" className="ghost-btn" onClick={handleLogin}>
-                    logowanie
+                    Logowanie
                 </button> 
-                    <space></space>
                 
                 <button type="button" className="ghost-btn" onClick={handleRegister}>
                     Rejestracja
@@ -101,7 +113,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                 </>
             )}
                 </div>
-                
+                <div className="heading-two">
                 <section className="buttons-sth">  
                     <button type="button" className="ghost-btn">
                         ENG/PL
@@ -115,11 +127,11 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     >
                         <span className="toggle-knob" />
                     </button>
-
-
-
                 </section>
+            </div>
             </section>
+            
+            
             <section className="hero">
                 <div className="carousel">
                     {heroSlides.map((slide, idx) => (
@@ -131,7 +143,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                         >
                             <div className="overlay" />
                             <div className="slide-content">
-                                <p className="eyebrow">Featured</p>
+                                <p className="eyebrow">Warte uwagi</p>
                                 <h1>{slide.title}</h1>
                                 <p className="description">{slide.description}</p>
                             </div>
@@ -174,28 +186,27 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
             <section className="search">
                 <div className="search-card">
-                    <p className="eyebrow">Search</p>
-                    <h2>Find your next event</h2>
+                    <p className="eyebrow">Odkryj</p>
+                    <h2>Odkryj swoje kolejne wydarzenie</h2>
                     <form className="search-form" onSubmit={handleSearch}>
                         <input
                             type="text"
-                            placeholder="Try “beach getaway” or “city weekend”"
+                            placeholder="Wpisz “koncert” albo “Warszawa”"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             aria-label="Search destinations"
                         />
-                        <button type="submit">Search</button>
+                        <button type="submit">Szukaj</button>
                     </form>
                 </div>
             </section>
 
             <section className="choices">
                 <header className="section-header">
-                    <p className="eyebrow">Plan your next move</p>
-                    <h2>Pick from these favorites</h2>
+                    <p className="eyebrow">Zaplanuj swój następny krok</p>
+                    <h2>Wybierz coś z ulubionych</h2>
                     <p className="muted">
-                        Three crowd-pleasers to get you started. Swap images and copy to
-                        match your brand.
+                        Trzy sprawdzone propozycje na start. Zmień obrazy i tekst, aby dopasować je do swojej marki.
                     </p>
                 </header>
                 {isLoadingEvents ? (
@@ -221,14 +232,15 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                                         type="button" 
                                         className="ghost-btn"
                                     onClick={() => handleOneEvent(choice.id)}>
-                                        Learn more
+                                        Zobacz więcej!
                                     </button>
                                 </div>
+                                
                             </article>
                         ))}
                     </div>
                 ) : (
-                    <p className="muted">No events available right now.</p>
+                    <p className="muted">Obecnie brak dostępnych wydarzeń.</p>
                 )}
             </section>
         </div>
@@ -300,6 +312,8 @@ function App() {
             <Route path="/event" element={<OneEventPage/>} />
             
             <Route path="/register" element={<RegisterUser />} />
+            
+            <Route path="/user" element={<UserPage />} />
         </Routes>
     );
 }

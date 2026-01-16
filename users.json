@@ -1,7 +1,7 @@
 {
   "1": {
     "username": "jasiu",
-    "fullname": "Jan Kowalski",
+    "fullname": "Jan Nowak",
     "email": "jasiu@example.com",
     "hashed_password": "hashpassword",
     "disabled": "False"
@@ -26,5 +26,12 @@
     "email": "login@login.pl",
     "disabled": false,
     "hashed_password": "hashloginpass"
+  },
+  "5": {
+    "username": "test",
+    "fullname": "test",
+    "email": "test@test.pl",
+    "disabled": false,
+    "hashed_password": "hashtest"
   }
 }

@@ -19,4 +19,6 @@ export const SEARCH_URL = 'http://localhost:8000/events/search';
 export const LOGIN_URL = 'http://localhost:8000/token';
 export  const ONE_EVENT_URL = 'http://localhost:8000/event';
 export  const REGISTER_URL = 'http://localhost:8000/register';
-
+export const DELETE_USER_URL = 'http://localhost:8000/delete_user';
+export const UPDATE_USER_URL = 'http://localhost:8000/update_user';
+export const  USER_ME_URL = 'http://localhost:8000/user';

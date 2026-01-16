@@ -46,6 +46,9 @@ class UserInDB(BaseModel):
     disabled: bool = False
     hashed_password: str
 
+class DeleteUserRequest(BaseModel):
+    password: str
+
 #CORS Middleware
 app.add_middleware(
     CORSMiddleware,
@@ -172,7 +175,7 @@ async def register_user(user: UserInput):
     return {"status": "User registered successfully", "user_id": new_id}
 
 @app.delete("/delete_user")
-async def delete_user(password: str, token: Annotated[str, Depends(oauth2_scheme)]):
+async def delete_user(password: DeleteUserRequest, token: Annotated[str, Depends(oauth2_scheme)]):
     db = load_users()
 
     user_id = token
@@ -180,7 +183,7 @@ async def delete_user(password: str, token: Annotated[str, Depends(oauth2_scheme
         raise HTTPException(status_code=404, detail="User not found")
 
     user = db[user_id]
-    if fake_hash_password(password) != user.get("hashed_password"):
+    if fake_hash_password(password.password) != user.get("hashed_password"):
         raise HTTPException(status_code=400, detail="Incorrect password")
 
     del db[user_id]
@@ -191,10 +194,7 @@ async def delete_user(password: str, token: Annotated[str, Depends(oauth2_scheme
 @app.put("/update_user")
 async def update_user(
         token: Annotated[str, Depends(oauth2_scheme)],
-        username: Optional[str] = None,
-        fullname: Optional[str] = None,
-        email: Optional[str] = None,
-        password: Optional[str] = None,
+        user_input: UserInput,
 ):
     db = load_users()
 
@@ -204,14 +204,14 @@ async def update_user(
 
     user = db[user_id]
 
-    if username:
-        user["username"] = username
-    if fullname:
-        user["fullname"] = fullname
-    if email:
-        user["email"] = email
-    if password:
-        user["hashed_password"] = fake_hash_password(password)
+    if user_input.username:
+        user["username"] = user_input.username
+    if user_input.fullname:
+        user["fullname"] = user_input.fullname
+    if user_input.email:
+        user["email"] = user_input.email
+    if user_input.password:
+        user["hashed_password"] = fake_hash_password(user_input.password)
 
     db[user_id] = user
     save_users(db)

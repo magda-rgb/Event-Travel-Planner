@@ -73,12 +73,15 @@ function EventsPage() {
     return (
         <div className="page">
             <section className="heading">
+                <div className="heading-text">
                 <button
                     type="button"
                     className="ghost-btn"
                     onClick={() => navigate(-1)}>
                     Back
                 </button>
+                </div>
+                <div className="heading-two">
                 <section className="buttons-sth">
                     <button type="button" className="ghost-btn">
                         ENG/PL
@@ -94,6 +97,7 @@ function EventsPage() {
                     </button>
 
                 </section>
+                </div>
             </section>
             <section className="events-page">
                 <header className="section-header">
@@ -126,7 +130,7 @@ function EventsPage() {
                                         type="button" 
                                         className="ghost-btn" 
                                         onClick={() => handleOneEvent(event.id)}>
-                                        View details
+                                        Zobacz szczegóły
                                     </button>
                                 </div>
                             </article>
