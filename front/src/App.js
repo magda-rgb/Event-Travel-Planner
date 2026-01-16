@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import {Navigate, Outlet, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import EventsPage from './EventsPage';
 import { EVENTS_URL, fallbackImages, eventImageIndex  } from './constants';
 import LoginPage from './LoginPage';
@@ -101,7 +101,6 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     </div>
                     <button type="button" className="ghost-btn" onClick={logout}>Wyloguj</button>
                     
-                    <button type="button" className="ghost-btn" onClick={handleShowUser}>Moje dane</button>
                 </>
             ):(
                 <>
@@ -114,12 +113,14 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                 </button>
                 </>
             )}
+                    <button type="button" className="ghost-btn" onClick={handleShowUser}>Moje dane</button>
+
                 </div>
                 <div className="heading-two">
                 <section className="buttons-sth">  
-                    <button type="button" className="ghost-btn">
-                        ENG/PL
-                    </button>
+                    {/*<button type="button" className="ghost-btn">*/}
+                    {/*    ENG/PL*/}
+                    {/*</button>*/}
 
                     <button
                         type="button"
@@ -208,7 +209,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     <p className="eyebrow">Zaplanuj swój następny krok</p>
                     <h2>Wybierz coś z ulubionych</h2>
                     <p className="muted">
-                        Trzy sprawdzone propozycje na start. Zmień obrazy i tekst, aby dopasować je do swojej marki.
+                        Trzy sprawdzone propozycje eventów do wyboru na start.
                     </p>
                 </header>
                 {isLoadingEvents ? (
@@ -254,6 +255,17 @@ function App() {
     const [isLoadingEvents, setIsLoadingEvents] = useState(true);
     const [eventsError, setEventsError] = useState('');
 
+    function RequireAuth() {
+        const location = useLocation();
+        const token = localStorage.getItem("access_token");
+
+        if(!token) {
+            return <Navigate to='/login' replace state={{ from: location }}/>
+        }
+        return <Outlet/>
+    }
+    
+    
     useEffect(() => {
         let isMounted = true;
         setIsLoadingEvents(true);
@@ -315,8 +327,13 @@ function App() {
             
             <Route path="/register" element={<RegisterUser />} />
             
-            <Route path="/user" element={<UserPage />} />
+            <Route element={<RequireAuth />}>
+                <Route path="/user" element={<UserPage/>}/>
+            </Route>
+            
         </Routes>
+        
+        
     );
 }
 

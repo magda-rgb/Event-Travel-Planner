@@ -83,9 +83,9 @@ function EventsPage() {
                 </div>
                 <div className="heading-two">
                 <section className="buttons-sth">
-                    <button type="button" className="ghost-btn">
-                        ENG/PL
-                    </button>
+                    {/*<button type="button" className="ghost-btn">*/}
+                    {/*    ENG/PL*/}
+                    {/*</button>*/}
 
                     <button
                         type="button"

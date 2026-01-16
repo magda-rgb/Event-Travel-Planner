@@ -1,7 +1,7 @@
 {
   "1": {
     "username": "jasiu",
-    "fullname": "Jan Nowak",
+    "fullname": "Jan Kowalski",
     "email": "jasiu@example.com",
     "hashed_password": "hashpassword",
     "disabled": "False"

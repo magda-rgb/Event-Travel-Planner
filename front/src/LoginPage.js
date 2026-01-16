@@ -42,7 +42,6 @@ function LoginPage() {
 
 
             if (!response.ok) {
-                // FastAPI: {"detail": "..."}
                 const msg = data?.detail || "Nie udało się zalogować";
                 throw new Error(msg);
             }
@@ -64,9 +63,9 @@ function LoginPage() {
                     Back
                 </button>
                 <section className="buttons-sth">
-                    <button type="button" className="ghost-btn">
+                    {/*<button type="button" className="ghost-btn">
                         ENG/PL
-                    </button>
+                    </button>*/}
 
                     <button
                         type="button"

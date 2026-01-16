@@ -24,17 +24,17 @@
 }
 
 .dark {
-  --bg: #f4f6fb; /* miękki jasny niebieskawy */
-  --panel: #ffffff; /* karty */
-  --choices: #f9fafc; /* delikatnie odróżnione sekcje */
-  --input: #eef1f6; /* inputy */
-  --border: #d7dde7; /* obramowania */
+  --bg: #f4f6fb; 
+  --panel: #ffffff; 
+  --choices: #f9fafc; 
+  --input: #eef1f6; 
+  --border: #d7dde7; 
 
-  --text: #0f172a; /* bardzo ciemny nie czarny */
+  --text: #0f172a; 
   --text2: rgba(15, 23, 42, 0.6);
-  --muted: #64748b; /* slate-500 */
+  --muted: #64748b; 
 
-  --accent: #7a91d6; /* niebieski pasujący do #66d9e8 */
+  --accent: #7a91d6; 
   --border-btn: rgba(62, 60, 60, 0.08);
 
 }
