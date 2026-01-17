@@ -11,6 +11,7 @@ The project is currently in its **first development stage**, focused on building
 - **[Installing](#installing)**
 - **[Overview](#overview)**
 - **[Back-end](#back-end)**
+- **[Front-end](#front-end)**
 - **[API Endpoints](#api-endpoints)**
   - **[Auth & User Endpoints](#auth--user-endpoints)**
   - **[Event Endpoints](#event-endpoints)**
@@ -61,6 +62,10 @@ Frontend: http://localhost:3000
 - **Data:** JSON persistence (`users.json`, `events.json`)
 - **CORS:** Frontend allowed from `http://localhost:3000`
 
+## Front-end
+- **Stack:** React.js (JavaScript ES6+)
+- **UI:** HTML5 / CSS3
+
 ## API Endpoints
 Base URL: `http://localhost:8000`
 
@@ -81,39 +86,3 @@ Base URL: `http://localhost:8000`
 | GET | `/events` | none | — | JSON object keyed by event id |
 | GET | `/events/search` | none | Query: `q` (search term) | Filtered JSON object keyed by event id |
 | GET | `/event` | none | Query: `q` (event id) | Single event object or 404 |
-
-
-# Examples
-### Register Endpoint
-- **Method:** POST
-- **Route:** `/register`
-- **Body (JSON):** `{ "username": "...", "password": "...", "fullname": "...", "email": "..." }`
-- **Response:** `{ "status": "User registered successfully", "user_id": "<id>" }`
-- **Notes:** Rejects duplicate usernames.
-
-### Login Endpoint
-- **Method:** POST
-- **Route:** `/token`
-- **Body (form):** `username=<user>&password=<pass>`
-- **Response:** `{ "access_token": "<user_id>", "token_type": "bearer" }`
-- **Notes:** Use the returned `access_token` as `Authorization: Bearer <token>`.
-
-### Current User Endpoint
-- **Method:** GET
-- **Route:** `/user`
-- **Headers:** `Authorization: Bearer <token>`
-- **Response:** User profile without `hashed_password`.
-
-### Update User Endpoint
-- **Method:** PUT
-- **Route:** `/update_user`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body (JSON, optional fields):** `{ "username": "...", "password": "...", "fullname": "...", "email": "..." }`
-- **Response:** `{ "status": "User updated successfully" }`
-
-### Delete User Endpoint
-- **Method:** DELETE
-- **Route:** `/delete_user`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body (JSON):** `{ "password": "<current_password>" }`
-- **Response:** `{ "status": "User deleted successfully" }`
