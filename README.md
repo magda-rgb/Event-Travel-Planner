@@ -2,85 +2,84 @@
 
 ---
 
-**Event Travel Planner** to aplikacja webowa tworzona w ramach **pracy licencjackiej**, której celem jest połączenie **zarządzania wydarzeniami** z **planowaniem podróży** w jednym, spójnym systemie.
+**Event Travel Planner** is a web application developed as part of a **bachelor’s thesis project**, aiming to combine **event management** with **travel planning** into a single, integrated platform.
 
-Aplikacja umożliwia użytkownikom przeglądanie wydarzeń (koncertów, konferencji, festiwali itp.), a w kolejnych etapach rozwoju będzie automatycznie proponować **transport** oraz **noclegi** dopasowane do wybranego wydarzenia i preferencji użytkownika.
+The application allows users to browse various events (concerts, conferences, festivals, etc.). In later stages of development, it will automatically suggest **transportation** and **accommodation** options tailored to the selected event and user preferences.
 
-Projekt znajduje się obecnie w **pierwszej fazie rozwoju**, skoncentrowanej na architekturze systemu, komunikacji frontend–backend oraz obsłudze użytkowników.
-
----
-
-## 🎯 Cel projektu
-
-Głównym celem aplikacji jest stworzenie systemu, który:
-
-1. Umożliwia przeglądanie i wyszukiwanie wydarzeń kulturalnych i biznesowych  
-2. Pozwala użytkownikowi wybrać konkretne wydarzenie  
-3. W przyszłości automatycznie sugeruje:
-   - **opcje transportu**
-   - **opcje noclegowe**
-
-na podstawie lokalizacji wydarzenia, daty oraz preferencji użytkownika.
-
-Dzięki temu użytkownik nie musi korzystać z wielu oddzielnych serwisów — cała logistyka związana z udziałem w wydarzeniu jest obsługiwana w jednym miejscu.
+The project is currently in its **first development stage**, focused on building the system architecture, frontend–backend communication, and user management.
 
 ---
 
-## ⚙️ Funkcjonalności
+## 🎯 Project Goal
 
-Aktualnie aplikacja oferuje:
+The main objective of the application is to create a system that:
 
-- rejestrację i logowanie użytkowników
-- przeglądanie oraz wyszukiwanie wydarzeń
-- widok szczegółów pojedynczego wydarzenia
-- podstawowe operacje CRUD
-- komunikację frontend–backend przez API
-- tymczasowe przechowywanie danych w plikach JSON
+1. Allows users to browse and search for cultural and business events  
+2. Enables users to select a specific event  
+3. In future stages, automatically suggests:
+   - **transportation options**
+   - **accommodation options**
 
-Planowane funkcjonalności:
+based on the event’s location, date, and user preferences.
 
-- zaawansowana autentykacja i autoryzacja użytkowników
-- integracja z zewnętrznymi API (transport, noclegi)
-- system rekomendacji oparty o preferencje użytkownika
-- panel użytkownika
+This approach eliminates the need to use multiple separate services — all logistics related to attending an event are handled in one place.
 
 ---
 
-## 🧩 Architektura projektu
+## ⚙️ Features
 
-Projekt składa się z dwóch głównych części:
+Currently, the application provides:
+
+- user registration and authentication
+- browsing and searching for events
+- detailed view of a single event
+- basic CRUD operations
+- frontend–backend communication via API
+- temporary data storage using JSON files
+
+Planned features:
+
+- advanced user authentication and authorization
+- integration with external APIs (transportation, accommodation)
+- recommendation system based on user preferences
+- user dashboard
+
+---
+
+## 🧩 Project Architecture
+
+The project consists of two main parts:
 
 ### Frontend
-- aplikacja webowa napisana w **React.js**
-- interfejs użytkownika
-- formularze logowania i rejestracji
-- komunikacja z backendem przez REST API
+- web application built with **React.js**
+- user interface
+- login and registration forms
+- communication with the backend via REST API
 
 ### Backend
-- serwer API oparty o **FastAPI**
-- obsługa użytkowników i wydarzeń
-- logika biznesowa aplikacji
-- tymczasowa warstwa danych oparta o pliki JSON  
-  *(docelowo: relacyjna baza danych)*
+- API server built with **FastAPI**
+- user and event management
+- business logic layer
+- temporary data layer based on JSON files  
+  *(target solution: relational database)*
 
 ---
 
-## 🛠️ Technologie
+## 🛠️ Technologies
 
 ### Frontend
 - React.js
-- JavaScript 
+- JavaScript (ES6+)
 - HTML5 / CSS3
-- tailwind
 
 ### Backend
 - Python 3.10+
 - FastAPI
-  
+- Uvicorn
 
 ---
 
-## 🚀 Uruchomienie projektu lokalnie
+## 🚀 Running the Project Locally
 
 ### Backend
 ```bash
@@ -90,6 +89,7 @@ source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
+
 ### Frontend
 ```bash
 cd frontend
@@ -97,15 +97,15 @@ npm install
 npm start
 ```
 
-Frontend dostępny pod adresem:
+Frontend available at:
 http://localhost:3000
 
-Backend API dostępne pod adresem:
+Backend API available at:
 http://localhost:8000
 
-## 🧪 Kontekst akademicki
+## 🧪 Academic Context
 
-Projekt pełni podwójną rolę:
-- praktycznej aplikacji webowej,
-- platformy badawczo-rozwojowej w ramach pracy licencjackiej,
-- Architektura systemu została zaprojektowana w sposób modularny i rozszerzalny, co umożliwia dalszy rozwój, testowanie algorytmów oraz integrację nowych usług w kolejnych etapach pracy.
+The project serves a dual purpose:
+- as a practical web application,
+- as a research and development platform created as part of a bachelor’s thesis.
+The system architecture has been designed in a modular and extensible way, allowing for further development, algorithm testing, and integration of new services in subsequent stages of the project.
