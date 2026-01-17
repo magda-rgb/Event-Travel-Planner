@@ -1,57 +1,110 @@
-# 🌍 Event & Travel Planner <some cooler name in the future>
-
-**Event & Travel Planner** is a web application developed as part of a bachelor’s thesis project. Its goal is to combine event management with travel planning — including accommodation and transportation — into one integrated platform.
-
-The application consists of:
-- a **backend** built with **FastAPI**
-- a **frontend** built with **React**
-
-The project is currently in its **first stage of development**, focusing on building the core architecture, API structure, and user management. In later stages, the application will be expanded with more advanced features and integrations.
+# Event Travel Planner
 
 ---
 
-## 🎯 Project Goal
+**Event Travel Planner** to aplikacja webowa tworzona w ramach **pracy licencjackiej**, której celem jest połączenie **zarządzania wydarzeniami** z **planowaniem podróży** w jednym, spójnym systemie.
 
-The main objective of the application is to create a system that:
-1. Allows users to browse and search for events (concerts, conferences, festivals, etc.)
-2. Lets users select a specific event
-3. Automatically suggests optimal:
-   - **transportation options**
-   - **accommodation options**
+Aplikacja umożliwia użytkownikom przeglądanie wydarzeń (koncertów, konferencji, festiwali itp.), a w kolejnych etapach rozwoju będzie automatycznie proponować **transport** oraz **noclegi** dopasowane do wybranego wydarzenia i preferencji użytkownika.
 
-based on the event location, date, and user preferences.
-
-This way, users do not need to use multiple separate services — all travel logistics related to attending an event are handled in one place.
+Projekt znajduje się obecnie w **pierwszej fazie rozwoju**, skoncentrowanej na architekturze systemu, komunikacji frontend–backend oraz obsłudze użytkowników.
 
 ---
 
-## 🧱 Current Scope
+## 🎯 Cel projektu
 
-At the current stage, the application provides:
-- user registration and authentication
-- browsing and searching for events
-- an API for managing users
-- basic frontend–backend integration
+Głównym celem aplikacji jest stworzenie systemu, który:
 
-The system currently uses JSON files as a temporary data storage solution.
+1. Umożliwia przeglądanie i wyszukiwanie wydarzeń kulturalnych i biznesowych  
+2. Pozwala użytkownikowi wybrać konkretne wydarzenie  
+3. W przyszłości automatycznie sugeruje:
+   - **opcje transportu**
+   - **opcje noclegowe**
 
----
+na podstawie lokalizacji wydarzenia, daty oraz preferencji użytkownika.
 
-## 🔮 Planned Development
-
-In future stages, the project will be expanded with:
-- accommodation booking system
-- transportation search and comparison
-- recommendation engine
-- user accounts with booking history
-- integration with external APIs (transport providers, hotels, maps)
+Dzięki temu użytkownik nie musi korzystać z wielu oddzielnych serwisów — cała logistyka związana z udziałem w wydarzeniu jest obsługiwana w jednym miejscu.
 
 ---
 
-## 🧪 Academic Context
+## ⚙️ Funkcjonalności
 
-This project serves both as:
-- a real-world web application
-- and a research & development platform for a bachelor’s thesis
+Aktualnie aplikacja oferuje:
 
-The system architecture is designed to be modular and easily extendable, allowing experimentation with new algorithms and future integrations.
+- rejestrację i logowanie użytkowników
+- przeglądanie oraz wyszukiwanie wydarzeń
+- widok szczegółów pojedynczego wydarzenia
+- podstawowe operacje CRUD
+- komunikację frontend–backend przez API
+- tymczasowe przechowywanie danych w plikach JSON
+
+Planowane funkcjonalności:
+
+- zaawansowana autentykacja i autoryzacja użytkowników
+- integracja z zewnętrznymi API (transport, noclegi)
+- system rekomendacji oparty o preferencje użytkownika
+- panel użytkownika
+
+---
+
+## 🧩 Architektura projektu
+
+Projekt składa się z dwóch głównych części:
+
+### Frontend
+- aplikacja webowa napisana w **React.js**
+- interfejs użytkownika
+- formularze logowania i rejestracji
+- komunikacja z backendem przez REST API
+
+### Backend
+- serwer API oparty o **FastAPI**
+- obsługa użytkowników i wydarzeń
+- logika biznesowa aplikacji
+- tymczasowa warstwa danych oparta o pliki JSON  
+  *(docelowo: relacyjna baza danych)*
+
+---
+
+## 🛠️ Technologie
+
+### Frontend
+- React.js
+- JavaScript (ES6+)
+- HTML5 / CSS3
+
+### Backend
+- Python 3.10+
+- FastAPI
+  
+
+---
+
+## 🚀 Uruchomienie projektu lokalnie
+
+### Backend
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+### Frontend
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Frontend dostępny pod adresem:
+http://localhost:3000
+
+Backend API dostępne pod adresem:
+http://localhost:8000
+
+## 🧪 Kontekst akademicki
+
+Projekt pełni podwójną rolę:
+- praktycznej aplikacji webowej,
+- platformy badawczo-rozwojowej w ramach pracy licencjackiej,
+- Architektura systemu została zaprojektowana w sposób modularny i rozszerzalny, co umożliwia dalszy rozwój, testowanie algorytmów oraz integrację nowych usług w kolejnych etapach pracy.
