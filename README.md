@@ -69,8 +69,9 @@ Projekt składa się z dwóch głównych części:
 
 ### Frontend
 - React.js
-- JavaScript (ES6+)
+- JavaScript 
 - HTML5 / CSS3
+- tailwind
 
 ### Backend
 - Python 3.10+
