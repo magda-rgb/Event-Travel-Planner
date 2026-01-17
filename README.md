@@ -73,13 +73,102 @@ The project consists of two main parts:
 - HTML5 / CSS3
 
 ### Backend
-- Python 3.10+
+- Python 3.13
 - FastAPI
 - Uvicorn
 
 ---
 
 ## 🚀 Running the Project Locally
+
+This repository contains a simple Events application back-end API built with FastAPI.
+The API supports:
+
+- user registration + login (OAuth2 password flow)
+- getting and updating the current user
+- deleting user account
+- listing events, searching events, and fetching a single event
+
+Data persistence is handled via local JSON files:
+- users.json
+- events.json
+
+## Installing
+A step by step series of examples that tell you how to get a development environment running
+`cd` into `server` folder and install dependencies with:
+
+Go to the backend folder and install dependencies:
+
+```
+yarn or npm install
+```
+
+Then launch the api with: 
+
+```
+yarn or npm run server
+```
+# Overview
+- Creating campaigns and seeing predictions for how successful they will be.
+
+# Back-end 
+
+API's | RDBMS and Data Persistence | Authentication | Form Testing
+
+
+# API Endpoints
+Use Base URL: http://localhost:8000
+
+
+Register & Login 
+| Method | Route                  | Description                                      |
+|--------|------------------------|--------------------------------------------------|
+| POST   | /api//register         | registers new users                              |
+| POST   | /api/token             | logs user into account                           |
+| GET    | /api/user              | returns current logged in user                   |
+
+Users
+| Method | Route                  | Description                                      |
+|--------|------------------------|--------------------------------------------------|
+| PUT    | /update_user           | updates current logged in user                   |
+| DELETE | /delete_user           | deletes current logged in user                   |
+
+Events
+| Method | Route                  | Description                                      |
+|--------|------------------------|--------------------------------------------------|
+| GET   | /api/events             | registers new users                              |
+| GET   | /api/events/search      | returns filtered events by query                 |
+| GET    | /api/events            | returns one event by key                         |
+
+## Register Endpoint
+```js
+POST /api/auth/register
+```
+Expected Body 
+```js
+    {
+    "username": "test",
+    "fullname": "test",
+    "email": "test@test.pl",
+    "disabled": false,
+    "hashed_password": "hashtest"
+  }
+```
+
+Expected Response
+```js
+   "1":{
+    "username": "new_username",
+    "fullname": "fullname",
+    "email": "email@example.com",
+    "hashed_password": "hashpassword",
+    "disabled": "False"
+  }
+```
+
+
+
+-----------
 
 ### Backend
 ```bash
