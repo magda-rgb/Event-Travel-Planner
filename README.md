@@ -1,57 +1,112 @@
-# 🌍 Event & Travel Planner <some cooler name in the future>
+# Event Travel Planner
 
-**Event & Travel Planner** is a web application developed as part of a bachelor’s thesis project. Its goal is to combine event management with travel planning — including accommodation and transportation — into one integrated platform.
+---
 
-The application consists of:
-- a **backend** built with **FastAPI**
-- a **frontend** built with **React**
+**Event Travel Planner** is a web application developed as part of a **bachelor’s thesis project**, aiming to combine **event management** with **travel planning** into a single, integrated platform.
 
-The project is currently in its **first stage of development**, focusing on building the core architecture, API structure, and user management. In later stages, the application will be expanded with more advanced features and integrations.
+The application allows users to browse various events (concerts, conferences, festivals, etc.). In later stages of development, it will automatically suggest **transportation** and **accommodation** options tailored to the selected event and user preferences.
+
+The project is currently in its **first development stage**, focused on building the system architecture, frontend–backend communication, and user management.
 
 ---
 
 ## 🎯 Project Goal
 
 The main objective of the application is to create a system that:
-1. Allows users to browse and search for events (concerts, conferences, festivals, etc.)
-2. Lets users select a specific event
-3. Automatically suggests optimal:
+
+1. Allows users to browse and search for cultural and business events  
+2. Enables users to select a specific event  
+3. In future stages, automatically suggests:
    - **transportation options**
    - **accommodation options**
 
-based on the event location, date, and user preferences.
+based on the event’s location, date, and user preferences.
 
-This way, users do not need to use multiple separate services — all travel logistics related to attending an event are handled in one place.
+This approach eliminates the need to use multiple separate services — all logistics related to attending an event are handled in one place.
 
 ---
 
-## 🧱 Current Scope
+## ⚙️ Features
 
-At the current stage, the application provides:
+Currently, the application provides:
+
 - user registration and authentication
 - browsing and searching for events
-- an API for managing users
-- basic frontend–backend integration
+- detailed view of a single event
+- basic CRUD operations
+- frontend–backend communication via API
+- temporary data storage using JSON files
 
-The system currently uses JSON files as a temporary data storage solution.
+Planned features:
+
+- advanced user authentication and authorization
+- integration with external APIs (transportation, accommodation)
+- recommendation system based on user preferences
+- user dashboard
+
+---
+
+## 🧩 Project Architecture
+
+The project consists of two main parts:
+
+### Frontend
+- web application built with **React.js**
+- user interface
+- login and registration forms
+- communication with the backend via REST API
+
+### Backend
+- API server built with **FastAPI**
+- user and event management
+- business logic layer
+- temporary data layer based on JSON files  
+  *(target solution: relational database)*
 
 ---
 
-## 🔮 Planned Development
+## 🛠️ Technologies
 
-In future stages, the project will be expanded with:
-- accommodation booking system
-- transportation search and comparison
-- recommendation engine
-- user accounts with booking history
-- integration with external APIs (transport providers, hotels, maps)
+### Frontend
+- React.js
+- JavaScript (ES6+)
+- HTML5 / CSS3
+
+### Backend
+- Python 3.10+
+- FastAPI
+- Uvicorn
 
 ---
+
+## 🚀 Running the Project Locally
+
+### Backend
+```bash
+cd backend
+python -m venv venv
+source .venv/Scripts/activate
+((.vene))
+pip install -r requirements.txt
+fastapi dev main.py
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Frontend available at:
+http://localhost:3000
+
+Backend API available at:
+http://localhost:8000
 
 ## 🧪 Academic Context
 
-This project serves both as:
-- a real-world web application
-- and a research & development platform for a bachelor’s thesis
-
-The system architecture is designed to be modular and easily extendable, allowing experimentation with new algorithms and future integrations.
+The project serves a dual purpose:
+- as a practical web application,
+- as a research and development platform created as part of a bachelor’s thesis.
+The system architecture has been designed in a modular and extensible way, allowing for further development, algorithm testing, and integration of new services in subsequent stages of the project.
