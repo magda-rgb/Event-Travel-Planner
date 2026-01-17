@@ -55,7 +55,7 @@ function EventsPage() {
             .catch((err) => {
                 if (!isMounted) return;
                 console.error(err);
-                setEventsError('Could not load search results right now.');
+                setEventsError('Nie można teraz załadować wyników wyszukiwania.');
                 setEvents([]);
             })
             .finally(() => {
@@ -101,12 +101,12 @@ function EventsPage() {
             </section>
             <section className="events-page">
                 <header className="section-header">
-                    <p className="eyebrow">All events</p>
-                    <h2>Search results</h2>
-                    <p className="muted">Listing everything from /search.</p>
+                    <p className="eyebrow">Wszystkie wydarzenia</p>
+                    <h2>Wyniki wyszukiwania</h2>
+                    <p className="muted">Wyświetlanie wszystkiego z /search.</p>
                 </header>
                 {isLoadingEvents ? (
-                    <p className="muted">Loading events…</p>
+                    <p className="muted">Ładowanie wydarzeń…</p>
                 ) : eventsError ? (
                     <p className="muted">{eventsError}</p>
                 ) : events.length ? (
