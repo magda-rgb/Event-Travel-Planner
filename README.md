@@ -85,9 +85,10 @@ The project consists of two main parts:
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+source .venv/Scripts/activate
+((.vene))
 pip install -r requirements.txt
-uvicorn main:app --reload
+fastapi dev main.py
 ```
 
 ### Frontend
