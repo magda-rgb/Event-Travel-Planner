@@ -165,6 +165,36 @@ Expected Response
     "disabled": "False"
   }
 ```
+## Login Endpoint
+```js
+POST /api/auth/login
+```
+Expected Body
+```js
+{
+    "username": "test_user",
+    "password": "password"
+}
+```
+Expected Response
+```js
+{
+    "message": "Welcome test_user",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJqZWN0IjoxMiwidXNlcm5hbWUiOiJuZXdfdXNlcjEyMTIxMiIsImlhdCI6MTU5ODQyMDg0NywiZXhwIjoxNTk4NDI4MDQ3fQ.YyR_rrRxYaDVTt3FPM155hPwbUAEFhyaDSOWqVOD8kM"
+}
+```
+### DELETE campaign by ID
+```js
+DELETE /api/campaigns/:id
+
+Expected Response: deletes campaign specified by :id
+
+Expected Response: 
+    {
+        "deleted": 1
+    }
+```
+
 
 
 
