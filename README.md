@@ -64,7 +64,7 @@ Frontend: http://localhost:3000
 
 ## Front-end
 - **Stack:** React.js (JavaScript ES6+)
-- **UI:** HTML5 / CSS3
+- **UI:** HTML5 / CSS3 / Tailwind CSS v4.1
 
 ## API Endpoints
 Base URL: `http://localhost:8000`
