@@ -1,112 +1,88 @@
 # Event Travel Planner
 
----
-
 **Event Travel Planner** is a web application developed as part of a **bachelor’s thesis project**, aiming to combine **event management** with **travel planning** into a single, integrated platform.
 
 The application allows users to browse various events (concerts, conferences, festivals, etc.). In later stages of development, it will automatically suggest **transportation** and **accommodation** options tailored to the selected event and user preferences.
 
 The project is currently in its **first development stage**, focused on building the system architecture, frontend–backend communication, and user management.
 
----
+## Table of Contents
+- **[Getting Started](#getting-started)**
+- **[Installing](#installing)**
+- **[Overview](#overview)**
+- **[Back-end](#back-end)**
+- **[Front-end](#front-end)**
+- **[API Endpoints](#api-endpoints)**
+  - **[Auth & User Endpoints](#auth--user-endpoints)**
+  - **[Event Endpoints](#event-endpoints)**
+  - **[Register Endpoint](#register-endpoint)**
+  - **[Login Endpoint](#login-endpoint)**
+  - **[Current User Endpoint](#current-user-endpoint)**
+  - **[Update User Endpoint](#update-user-endpoint)**
+  - **[Delete User Endpoint](#delete-user-endpoint)**
 
-## 🎯 Project Goal
+## Getting Started
+The app is in its first development stage, focusing on architecture, frontend–backend communication, and user management. Future releases will include transport and accommodation suggestions to unify trip logistics for event attendees.
 
-The main objective of the application is to create a system that:
-
-1. Allows users to browse and search for cultural and business events  
-2. Enables users to select a specific event  
-3. In future stages, automatically suggests:
-   - **transportation options**
-   - **accommodation options**
-
-based on the event’s location, date, and user preferences.
-
-This approach eliminates the need to use multiple separate services — all logistics related to attending an event are handled in one place.
-
----
-
-## ⚙️ Features
-
-Currently, the application provides:
-
-- user registration and authentication
-- browsing and searching for events
-- detailed view of a single event
-- basic CRUD operations
-- frontend–backend communication via API
-- temporary data storage using JSON files
-
-Planned features:
-
-- advanced user authentication and authorization
-- integration with external APIs (transportation, accommodation)
-- recommendation system based on user preferences
-- user dashboard
-
----
-
-## 🧩 Project Architecture
-
-The project consists of two main parts:
-
-### Frontend
-- web application built with **React.js**
-- user interface
-- login and registration forms
-- communication with the backend via REST API
-
-### Backend
-- API server built with **FastAPI**
-- user and event management
-- business logic layer
-- temporary data layer based on JSON files  
-  *(target solution: relational database)*
-
----
-
-## 🛠️ Technologies
-
-### Frontend
-- React.js
-- JavaScript (ES6+)
-- HTML5 / CSS3
-
-### Backend
-- Python 3.10+
-- FastAPI
-- Uvicorn
-
----
-
-## 🚀 Running the Project Locally
+## Installing
+### Requirements
+- Python 3.13+
+- Node.js (LTS recommended)
 
 ### Backend
 ```bash
-cd backend
 python -m venv venv
-source .venv/Scripts/activate
-((.vene))
-pip install -r requirements.txt
-fastapi dev main.py
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install "fastapi[standard]"
+fastapi dev main.py       # or: uvicorn main:app --reload
 ```
 
+Backend API: http://localhost:8000
+
 ### Frontend
 ```bash
-cd frontend
+cd front
 npm install
 npm start
 ```
 
-Frontend available at:
-http://localhost:3000
+Frontend: http://localhost:3000
 
-Backend API available at:
-http://localhost:8000
+## Overview
+- Browse and search events; view event details.
+- User registration and OAuth2 password login.
+- User profile read/update/delete.
+- Frontend–backend communication over REST.
+- Data stored in JSON files (`users.json`, `events.json`) for now; target is a relational DB.
+- Planned: advanced auth/authorization, external transport/hotel integrations, recommendations, user dashboard.
 
-## 🧪 Academic Context
+## Back-end
+- **Stack:** FastAPI + Uvicorn (Python 3.13)
+- **Auth:** OAuth2 password flow issuing bearer tokens
+- **Data:** JSON persistence (`users.json`, `events.json`)
+- **CORS:** Frontend allowed from `http://localhost:3000`
 
-The project serves a dual purpose:
-- as a practical web application,
-- as a research and development platform created as part of a bachelor’s thesis.
-The system architecture has been designed in a modular and extensible way, allowing for further development, algorithm testing, and integration of new services in subsequent stages of the project.
+## Front-end
+- **Stack:** React.js (JavaScript ES6+)
+- **UI:** HTML5 / CSS3 / Tailwind CSS v4.1
+
+## API Endpoints
+Base URL: `http://localhost:8000`
+
+### Auth & User Endpoints
+
+| Method | Route | Auth | Body | Response |
+| --- | --- | --- | --- | --- |
+| POST | `/register` | none | JSON: `username`, `password`, `fullname`, `email` | `{ "status": "User registered successfully", "user_id": "<id>" }` |
+| POST | `/token` | none | Form: `username`, `password` | `{ "access_token": "<user_id>", "token_type": "bearer" }` (use as Bearer token) |
+| GET | `/user` | Bearer token | — | User profile without `hashed_password` |
+| PUT | `/update_user` | Bearer token | JSON (optional): `username`, `password`, `fullname`, `email` | `{ "status": "User updated successfully" }` |
+| DELETE | `/delete_user` | Bearer token | JSON: `password` (current) | `{ "status": "User deleted successfully" }` |
+
+### Event Endpoints
+
+| Method | Route | Auth | Query/Body | Response |
+| --- | --- | --- | --- | --- |
+| GET | `/events` | none | — | JSON object keyed by event id |
+| GET | `/events/search` | none | Query: `q` (search term) | Filtered JSON object keyed by event id |
+| GET | `/event` | none | Query: `q` (event id) | Single event object or 404 |
