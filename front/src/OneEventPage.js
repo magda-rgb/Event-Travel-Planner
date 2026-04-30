@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import {SEARCH_URL,eventImageIndex, fallbackImages, ONE_EVENT_URL} from './constants';
+import {ONE_EVENT_URL, eventImageIndex, fallbackImages} from './constants';
 import {useLocation} from "react-router-dom";
-import {useAuth} from "./AuthContext";
-import {useNavigate} from "react-router-dom";
+import PageHeader from './components/PageHeader';
 
 function OneEventPage() {
     const [event, setEvent] = useState([]);
@@ -10,21 +9,10 @@ function OneEventPage() {
     const [eventsError, setEventsError] = useState('');
     const {search} =useLocation();
     const eventId = new URLSearchParams(search).get("q");
-    const navigate = useNavigate();
 
-    const [themeOn, setThemeOn] = useState(
-        document.documentElement.classList.contains("dark")
-    );
-    const {user,logout} = useAuth();
 
-    function toggleTheme() {
-        setThemeOn((prev) => {
-            const next = !prev;
-            document.documentElement.classList.toggle("dark", next);
-            localStorage.theme = next ? "dark" : "light";
-            return next;
-        });
-    }
+
+    
 
     useEffect(() => {
         let isMounted = true;
@@ -70,33 +58,7 @@ function OneEventPage() {
 
     return (
         <div className="page">
-            <section className="heading">
-                <div className="heading-one">
-                <button 
-                    type="button" 
-                    className="ghost-btn"
-                    onClick={() => navigate(-1)}>
-                    Back
-                </button>
-                </div>
-                <div className="heading-two">
-                <section className="buttons-sth">
-                    {/*<button type="button" className="ghost-btn">*/}
-                    {/*    ENG/PL*/}
-                    {/*</button>*/}
-
-                    <button
-                        type="button"
-                        className={`toggle ${themeOn ? "is-on" : ""}`}
-                        onClick={toggleTheme}
-                        aria-label="Motyw"
-                    >
-                        <span className="toggle-knob" />
-                    </button>
-
-                </section>
-                </div>
-            </section>
+            <PageHeader />
             <div>
             <section className="events-page">
                 <header className="section-header">

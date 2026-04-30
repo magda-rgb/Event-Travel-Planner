@@ -1,12 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
-  content: [],
+  content: [
+    "./public/**/*.html",
+    "./src/**/*.{js,jsx,ts,tsx,mdx,mjs,cjs}",
+  ],
   theme: {
     extend: {
-      grape:"rgba(var(--grape))"
+      colors: {
+        grape: "var(--grape)",
+      },
     },
   },
   plugins: [],
-}
-
+};

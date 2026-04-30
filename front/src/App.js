@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {Navigate, Outlet, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import EventsPage from './EventsPage';
 import { EVENTS_URL, fallbackImages, eventImageIndex  } from './constants';
+import useThemeToggle from './hooks/useThemeToggle';
 import LoginPage from './LoginPage';
 import {useAuth} from './AuthContext';
 import OneEventPage from "./OneEventPage";
@@ -33,21 +34,11 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
     const lastIndex = heroSlides.length - 1;
-    const [themeOn, setThemeOn] = useState(
-        document.documentElement.classList.contains("dark")
-    );
+    const { themeOn, toggleTheme } = useThemeToggle();
     const {user,logout} = useAuth();
-
-
-    function toggleTheme() {
-        setThemeOn((prev) => {
-            const next = !prev;
-            document.documentElement.classList.toggle("dark", next);
-            localStorage.theme = next ? "dark" : "light";
-            return next;
-        });
-    }
 
 
 
@@ -58,7 +49,26 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         return () => clearInterval(id);
     }, [lastIndex]);
 
-    
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        }
+
+        function handleEscape(event) {
+            if (event.key === 'Escape') {
+                setMenuOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, []);
 
     const handleSearch = (event) => {
         event.preventDefault();
@@ -83,6 +93,10 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
     
     
     const featuredChoices = events.slice(0, 3);
+    const menuTriggerClass =
+        "inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--panel)] px-4 py-2 text-sm font-semibold text-[var(--text)] shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition hover:border-[var(--accent)]";
+    const menuItemClass =
+        "block w-full rounded-xl px-3 py-2 text-left text-sm text-[var(--text)] transition hover:bg-[var(--border-btn)]";
 
     const handleOneEvent = (id) => {
         navigate(`/event?q=${encodeURIComponent(id)}`)
@@ -99,21 +113,8 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     Zalogowany jako&nbsp; <b>{user.username}</b>
 
                     </div>
-                    <button type="button" className="ghost-btn" onClick={logout}>Wyloguj</button>
-                    
                 </>
-            ):(
-                <>
-                <button type="button" className="ghost-btn" onClick={handleLogin}>
-                    Logowanie
-                </button> 
-                
-                <button type="button" className="ghost-btn" onClick={handleRegister}>
-                    Rejestracja
-                </button>
-                </>
-            )}
-                    <button type="button" className="ghost-btn" onClick={handleShowUser}>Moje dane</button>
+            ) : null}
 
                 </div>
                 <div className="heading-two">
@@ -124,12 +125,85 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
                     <button
                         type="button"
-                        className={`toggle ${themeOn ? "is-on" : ""}`}
+                        className={`inline-flex h-[30px] w-14 items-center rounded-full p-[3px] transition-colors duration-200 ${
+                            themeOn ? 'bg-[#66d9e8]' : 'bg-[#7a91d6]'
+                        }`}
                         onClick={toggleTheme}
                         aria-label="Motyw"
                     >
-                        <span className="toggle-knob" />
+                        <span
+                            className={`h-6 w-6 rounded-full bg-white shadow-[0_4px_10px_rgba(0,0,0,0.2)] transition-transform duration-200 ${
+                                themeOn ? 'translate-x-[26px]' : 'translate-x-0'
+                            }`}
+                        />
                     </button>
+                    <div ref={menuRef} className="relative normal-case tracking-normal">
+                        <button
+                            type="button"
+                            className={menuTriggerClass}
+                            onClick={() => setMenuOpen((prev) => !prev)}
+                            aria-haspopup="menu"
+                            aria-expanded={menuOpen}
+                            aria-label="Otwórz menu użytkownika"
+                        >
+                            Menu
+                            <span className={`transition-transform ${menuOpen ? 'rotate-180' : ''}`}>
+                                ▾
+                            </span>
+                        </button>
+
+                        {menuOpen ? (
+                            <div className="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-2 shadow-[0_18px_44px_rgba(0,0,0,0.35)]">
+                                {user ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className={menuItemClass}
+                                            onClick={(event) => {
+                                                handleShowUser(event);
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            Moje dane
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={menuItemClass}
+                                            onClick={() => {
+                                                logout();
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            Wyloguj
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className={menuItemClass}
+                                            onClick={(event) => {
+                                                handleLogin(event);
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            Logowanie
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={menuItemClass}
+                                            onClick={(event) => {
+                                                handleRegister(event);
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            Rejestracja
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        ) : null}
+                    </div>
                 </section>
             </div>
             </section>

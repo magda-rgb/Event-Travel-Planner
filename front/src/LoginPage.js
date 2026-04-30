@@ -2,6 +2,8 @@ import { useState } from 'react';
 import {LOGIN_URL} from "./constants";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAuth} from "./AuthContext";
+import FormField from "./components/FormField";
+import PageHeader from "./components/PageHeader";
 
 function LoginPage() {
     const [username, setUsername] = useState('');
@@ -12,20 +14,9 @@ function LoginPage() {
     
     const {login} = useAuth();
     const [errorMsg, setErrorMsg] = useState('');
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-
-    const [themeOn, setThemeOn] = useState(
-        document.documentElement.classList.contains("dark")
-    );
-    
-    function toggleTheme() {
-        setThemeOn((prev) => {
-            const next = !prev;
-            document.documentElement.classList.toggle("dark", next);
-            localStorage.theme = next ? "dark" : "light";
-            return next;
-        });
-    }
+  
     
     async function handleLogin(e) {
         e.preventDefault();
@@ -59,62 +50,68 @@ function LoginPage() {
             }
         } catch (err) {
             setErrorMsg(err.message);
+            setIsErrorDialogOpen(true);
         }
     }
     
     return (
         <div className="page">
-            <section className="heading">
-                <button
-                    type="button"
-                    className="ghost-btn"
-                    onClick={() => navigate(-1)}>
-                    Back
-                </button>
-                <section className="buttons-sth">
-                    {/*<button type="button" className="ghost-btn">
-                        ENG/PL
-                    </button>*/}
-
-                    <button
-                        type="button"
-                        className={`toggle ${themeOn ? "is-on" : ""}`}
-                        onClick={toggleTheme}
-                        aria-label="Motyw"
-                    >
-                        <span className="toggle-knob" />
-                    </button>
-
-                </section>
-            </section>
-        <section className="login-card">
-        <div className="login">
-        <form onSubmit={handleLogin} className="login-form-space">
-            <div className="eyebrow">
-                <label className="login-form">UserName
-                    <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}/>
-                </label>
-            </div>
-            <div className="eyebrow">
-            <label className="login-form">Password
+            <PageHeader />
+            <FormField title="Logowanie"
+                   onSubmit={handleLogin}
+                   cardClassName="login-card"
+                   contentClassName="c"
+                   formClassName="login-form-space"
+                   buttonText="Zaloguj">
+            <div className="form-field">
+                <label htmlFor="login-username" className="field-label">Nazwa użytkownika</label>
                 <input
+                    id="login-username"
+                    type="text"
+                    autoComplete="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+            </div>
+            <div className="form-field">
+                <label htmlFor="login-password" className="field-label">Hasło</label>
+                <input
+                    id="login-password"
                     type="password"
+                    autoComplete="current-password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}/>
-                </label>
+                    onChange={(e) => setPassword(e.target.value)}
+                />
             </div>
 
-            {errorMsg && <div className="eyebrow">{errorMsg}</div>}
+            </FormField>
 
-            <div className="login-form">
-                <button type="submit">Zaloguj</button>
-            </div>
-        </form>
-        </div>
-        </section>
+            {isErrorDialogOpen ? (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="login-error-title"
+                >
+                    <div className="w-full max-w-md rounded-2xl border border-red-300/40 bg-white p-6 shadow-2xl dark:border-red-400/40 dark:bg-slate-900">
+                        <h2 id="login-error-title" className="text-lg font-semibold text-red-600 dark:text-red-400">
+                            Błąd logowania
+                        </h2>
+                        <p className="mt-3 text-sm text-slate-700 dark:text-slate-200">
+                            {errorMsg || 'Nie udało się zalogować. Spróbuj ponownie.'}
+                        </p>
+                        <div className="mt-6 flex justify-end">
+                            <button
+                                type="button"
+                                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500"
+                                onClick={() => setIsErrorDialogOpen(false)}
+                            >
+                                Zamknij
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ) : null}
         </div>
     )
 }

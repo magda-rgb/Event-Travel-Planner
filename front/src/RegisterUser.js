@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { REGISTER_URL} from "./constants";
 import {useNavigate} from "react-router-dom";
+import FormField from "./components/FormField";
+import PageHeader from "./components/PageHeader";
 
 function RegisterUser() {
     const [username, setUsername] = useState('');
@@ -9,23 +11,11 @@ function RegisterUser() {
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
-    const [themeOn, setThemeOn] = useState(
-        document.documentElement.classList.contains("dark")
-    );
-
-    function toggleTheme() {
-        setThemeOn((prev) => {
-            const next = !prev;
-            document.documentElement.classList.toggle("dark", next);
-            localStorage.theme = next ? "dark" : "light";
-            return next;
-        });
-    }
+    
 
     async function handleRegister(e) {
         e.preventDefault();
         try {
-            const requestBody = {username: username, fullname: fullname, password: password, email: email};
             const response = await fetch(REGISTER_URL, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -43,7 +33,7 @@ function RegisterUser() {
                 throw new Error(response.statusText);
             }
 
-            const data = await response.json();
+            await response.json();
 
 
             navigate('/');
@@ -53,76 +43,60 @@ function RegisterUser() {
 
     }
 
-    
-    
-    
     return (
         <div className="page">
-            <section className="heading">
-                <div className="heading-one">
-                <button
-                    type="button"
-                    className="ghost-btn"
-                    onClick={() => navigate(-1)}>
-                    Back
-                </button>
+            <PageHeader />
+            <FormField
+                title="Rejestracja"
+                onSubmit={handleRegister}
+                cardClassName="register-card"
+                contentClassName="c"
+                formClassName="register-form-space"
+                buttonText="Zarejestruj się"
+            >
+                <div className="form-field">
+                    <label htmlFor="reg-username" className="field-label">Nazwa użytkownika</label>
+                    <input
+                        id="reg-username"
+                        type="text"
+                        autoComplete="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
                 </div>
-                <div className="heading-two">
-                <section className="buttons-sth">
-                    {/*<button type="button" className="ghost-btn">*/}
-                    {/*    ENG/PL*/}
-                    {/*</button>*/}
-
-                    <button
-                        type="button"
-                        className={`toggle ${themeOn ? "is-on" : ""}`}
-                        onClick={toggleTheme}
-                        aria-label="Motyw"
-                    >
-                        <span className="toggle-knob" />
-                    </button>
-
-                </section>
+                <div className="form-field">
+                    <label htmlFor="reg-fullname" className="field-label">Imię i nazwisko</label>
+                    <input
+                        id="reg-fullname"
+                        type="text"
+                        autoComplete="name"
+                        value={fullname}
+                        onChange={(e) => setFullname(e.target.value)}
+                    />
                 </div>
-            </section>
-            <section className="login-card">
-                <div className="login">
-                    <form onSubmit={handleRegister} className="login-form-space">
-                        <div className="eyebrow">
-                            <label className="login-form">UserName
-                                <input
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}/>
-                            </label>
-                            <label className="login-form">fullname
-                                <input
-                                    type="text"
-                                    value={fullname}
-                                    onChange={(e) => setFullname(e.target.value)}/>
-                            </label>
-                            <label className="login-form">password
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}/>
-                            </label>
-                            <label className="login-form">email
-                                <input
-                                    type="text"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}/>
-                            </label>
-                        </div>
-                            
-                        
-                        <div className="login-form">
-                            <button type="submit" >Zarejestruj się</button>
-                        </div>
-                    </form>
+                <div className="form-field">
+                    <label htmlFor="reg-password" className="field-label">Hasło</label>
+                    <input
+                        id="reg-password"
+                        type="password"
+                        autoComplete="new-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
                 </div>
-            </section>
+                <div className="form-field">
+                    <label htmlFor="reg-email" className="field-label">E-mail</label>
+                    <input
+                        id="reg-email"
+                        type="email"
+                        autoComplete="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </div>
+            </FormField>
         </div>
+
     )
 }
 export default RegisterUser;

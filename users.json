@@ -1,11 +1,4 @@
 {
-  "1": {
-    "username": "jasiu",
-    "fullname": "Jan Kowalski",
-    "email": "jasiu@example.com",
-    "hashed_password": "hashpassword",
-    "disabled": "False"
-  },
   "2": {
     "username": "stasiu",
     "fullname": "Stanis\u0142aw Nowak",

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {SEARCH_URL, fallbackImages, eventImageIndex} from './constants';
 import {useLocation, useNavigate} from "react-router-dom";
-import {useAuth} from "./AuthContext";
+import PageHeader from './components/PageHeader';
 
 
 function EventsPage() {
@@ -9,24 +9,11 @@ function EventsPage() {
     const [isLoadingEvents, setIsLoadingEvents] = useState(true);
     const [eventsError, setEventsError] = useState('');
     const navigate = useNavigate();
-    const image = fallbackImages[eventImageIndex[events.rodzaj] ?? 0];
 
 
     const {search} =useLocation();
     const searchTerm = new URLSearchParams(search).get("q");
-    const [themeOn, setThemeOn] = useState(
-        document.documentElement.classList.contains("dark")
-    );
-    const {user,logout} = useAuth();
-
-    function toggleTheme() {
-        setThemeOn((prev) => {
-            const next = !prev;
-            document.documentElement.classList.toggle("dark", next);
-            localStorage.theme = next ? "dark" : "light";
-            return next;
-        });
-    }
+    
 
     useEffect(() => {
         let isMounted = true;
@@ -43,7 +30,7 @@ function EventsPage() {
                 if (!data || typeof data !== 'object') {
                     throw new Error('Unexpected response shape');
                 }
-                const mapped = Object.entries(data).map(([key, ev], idx) => ({
+                const mapped = Object.entries(data).map(([key, ev]) => ({
                     id: key,
                     title: ev.miejsce,
                     blurb: `${ev.rodzaj}-${ev.data}`,
@@ -64,7 +51,7 @@ function EventsPage() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [searchTerm]);
     
     const handleOneEvent = (id) => {
         navigate(`/event?q=${encodeURIComponent(id)}`);
@@ -72,33 +59,7 @@ function EventsPage() {
 
     return (
         <div className="page">
-            <section className="heading">
-                <div className="heading-text">
-                <button
-                    type="button"
-                    className="ghost-btn"
-                    onClick={() => navigate(-1)}>
-                    Back
-                </button>
-                </div>
-                <div className="heading-two">
-                <section className="buttons-sth">
-                    {/*<button type="button" className="ghost-btn">*/}
-                    {/*    ENG/PL*/}
-                    {/*</button>*/}
-
-                    <button
-                        type="button"
-                        className={`toggle ${themeOn ? "is-on" : ""}`}
-                        onClick={toggleTheme}
-                        aria-label="Motyw"
-                    >
-                        <span className="toggle-knob" />
-                    </button>
-
-                </section>
-                </div>
-            </section>
+            <PageHeader />
             <section className="events-page">
                 <header className="section-header">
                     <p className="eyebrow">Wszystkie wydarzenia</p>
