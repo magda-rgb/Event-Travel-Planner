@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 import httpx
 
 TM_BASE = "https://app.ticketmaster.com/discovery/v2"
+GOOGLE_BASE = "https://maps.googleapis.com/maps/api"
 TIMEOUT = 8.0
 
 
@@ -93,3 +94,69 @@ async def tm_get_event(event_id: str) -> Dict[str, Any]:
         )
         r.raise_for_status()
         return _normalize(r.json())
+
+
+def _gkey() -> str:
+    k = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+    if not k:
+        raise RuntimeError("Brak GOOGLE_MAPS_API_KEY w .env")
+    return k
+
+
+def _normalize_route(route: Dict[str, Any], idx: int) -> Dict[str, Any]:
+    leg = (route.get("legs") or [{}])[0]
+
+    operators: List[str] = []
+    operator_url: Optional[str] = None
+    for s in leg.get("steps") or []:
+        td = s.get("transit_details") or {}
+        line = td.get("line") or {}
+        for ag in line.get("agencies") or []:
+            name = ag.get("name")
+            url = ag.get("url")
+            if name and name not in operators:
+                operators.append(name)
+                if operator_url is None and url:
+                    operator_url = url
+
+    return {
+        "id": str(idx),
+        "summary": ", ".join(operators) if operators else "Komunikacja publiczna",
+        "duration_text": (leg.get("duration") or {}).get("text", ""),
+        "depart": (leg.get("departure_time") or {}).get("text", ""),
+        "arrive": (leg.get("arrival_time") or {}).get("text", ""),
+        "url": operator_url,
+    }
+
+
+async def google_routes(
+    from_city: str,
+    to_city: str,
+    depart_date: str,
+) -> List[Dict[str, Any]]:
+    key = _gkey()
+    departure_ts = int(
+        datetime.fromisoformat(f"{depart_date}T12:00:00")
+        .replace(tzinfo=timezone.utc)
+        .timestamp()
+    )
+    async with httpx.AsyncClient(timeout=TIMEOUT) as c:
+        r = await c.get(
+            f"{GOOGLE_BASE}/directions/json",
+            params={
+                "origin": from_city,
+                "destination": to_city,
+                "mode": "transit",
+                "alternatives": "true",
+                "departure_time": departure_ts,
+                "language": "pl",
+                "key": key,
+            },
+        )
+        r.raise_for_status()
+        data = r.json()
+
+    return [
+        _normalize_route(route, i)
+        for i, route in enumerate((data.get("routes") or [])[:5])
+    ]

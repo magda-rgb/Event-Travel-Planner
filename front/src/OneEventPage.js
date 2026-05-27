@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { eventDetailUrl, fallbackImages, segmentImageIndex } from './constants';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PageHeader from './components/PageHeader';
 
 
@@ -17,6 +17,7 @@ function formatPrice(event) {
 
 function OneEventPage() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [event, setEvent] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState('');
@@ -133,6 +134,19 @@ function OneEventPage() {
                                 <p>{event.please_note}</p>
                             </>
                         ) : null}
+
+                        <button
+                            type="button"
+                            className="ghost-btn"
+                            onClick={() =>
+                                navigate(`/event/${id}/podroz`, {
+                                    state: { city: event.city, date: event.date },
+                                })
+                            }
+                            style={{ marginTop: '1rem', marginRight: '0.5rem' }}
+                        >
+                            Zarezerwuj
+                        </button>
 
                         {event.url ? (
                             <a

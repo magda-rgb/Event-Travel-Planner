@@ -10,33 +10,27 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 import os
 
-from providers import tm_get_event, tm_search_events
+from providers import google_routes, tm_get_event, tm_search_events
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "projekt_db")
 
-app = FastAPI()
-
+app= FastAPI()
+client = MongoClient(MONGO_URI)
 try:
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
     client.admin.command("ping")
-    db = client[MONGO_DB]
-    users_collection = db["users"]
-    users_collection.create_index("username", unique=True)
     print("MongoDB connected")
 except Exception as e:
-    print(f"MongoDB unavailable: {e}")
-    client = None
-    db = None
-    users_collection = None
+    print(f"MongoDB connection error: {e}")
 
 
-def _require_mongo():
-    if users_collection is None:
-        raise HTTPException(status_code=503, detail="Brak polaczenia z MongoDB")
+db = client[MONGO_DB]
+users_collection = db["users"]
+events_collection = db["events"]
 
+users_collection.create_index("username", unique=True)
 
 def fake_hash_password(password:str):
     return "hash" + password
@@ -59,6 +53,11 @@ class UserInDB(BaseModel):
 
 class DeleteUserRequest(BaseModel):
     password: str
+
+class TransportSearchRequest(BaseModel):
+    from_city: str
+    to_city: str
+    depart_date: str
 
 
 #CORS Middleware
@@ -122,7 +121,6 @@ def fake_decode_token(token: str) -> Optional[UserInDB]:
     return get_user_by_id(token)
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserInDB:
-    _require_mongo()
     user = fake_decode_token(token)
     if not user:
         raise HTTPException(
@@ -141,7 +139,6 @@ async def get_current_active_user(
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    _require_mongo()
     user_id = find_user_id_by_username(form_data.username)
     if not user_id:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
@@ -208,9 +205,23 @@ async def read_one_event(event_id: str):
     return await _safe_tm_call(tm_get_event(event_id))
 
 
+@app.post("/travel/transport/search")
+async def search_transport(req: TransportSearchRequest):
+    if not req.from_city or not req.to_city or not req.depart_date:
+        raise HTTPException(status_code=400, detail="from_city, to_city i depart_date sa wymagane")
+    try:
+        offers = await google_routes(req.from_city, req.to_city, req.depart_date)
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail=f"Blad Google: {e.response.status_code}")
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"Google nieosiagalny: {e}")
+    return {"options": offers}
+
+
 @app.post("/register")
 async def register_user(user: UserInput):
-    _require_mongo()
     if username_taken(user.username):
         raise HTTPException(status_code=400, detail="Username already registered")
 
@@ -228,7 +239,6 @@ async def register_user(user: UserInput):
 
 @app.delete("/delete_user")
 async def delete_user(password: DeleteUserRequest, token: Annotated[str, Depends(oauth2_scheme)]):
-    _require_mongo()
     user_id = token
     if not user_id:
         raise HTTPException(status_code=404, detail="User not found")
@@ -248,7 +258,6 @@ async def update_user(
         token: Annotated[str, Depends(oauth2_scheme)],
         user_input: UserInput,
 ):
-    _require_mongo()
     user_id = token
     user = users_collection.find_one({"_id": user_id})
     if not user:

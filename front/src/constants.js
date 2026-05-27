@@ -27,3 +27,4 @@ export const REGISTER_URL = `${API_BASE}/register`;
 export const DELETE_USER_URL = `${API_BASE}/delete_user`;
 export const UPDATE_USER_URL = `${API_BASE}/update_user`;
 export const USER_ME_URL = `${API_BASE}/user`;
+export const TRANSPORT_URL = `${API_BASE}/travel/transport/search`;

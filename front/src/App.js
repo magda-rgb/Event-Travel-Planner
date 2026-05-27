@@ -6,6 +6,7 @@ import useThemeToggle from './hooks/useThemeToggle';
 import LoginPage from './LoginPage';
 import {useAuth} from './AuthContext';
 import OneEventPage from "./OneEventPage";
+import PodrozPage from "./PodrozPage";
 import RegisterUser from "./RegisterUser";
 import UserPage from './UserPage';
 
@@ -405,6 +406,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             
             <Route path="/event/:id" element={<OneEventPage/>} />
+            <Route path="/event/:id/podroz" element={<PodrozPage/>} />
             
             <Route path="/register" element={<RegisterUser />} />
             
