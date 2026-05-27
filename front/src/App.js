@@ -35,7 +35,13 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
     const [city, setCity] = useState('');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(() => {
+        const now = new Date();
+        const yyyy = String(now.getFullYear());
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    });
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
     const lastIndex = heroSlides.length - 1;
@@ -110,9 +116,8 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
     return (
         <div className="page">
-            <section className="heading">
+            <section className="heading nav-panel">
                 <div className="heading-one">
-                    
             {user ? (
                 <>
                     <div className="login-name">

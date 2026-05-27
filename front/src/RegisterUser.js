@@ -50,7 +50,7 @@ function RegisterUser() {
                 title="Rejestracja"
                 onSubmit={handleRegister}
                 cardClassName="register-card"
-                contentClassName="c"
+                contentClassName="login"
                 formClassName="register-form-space"
                 buttonText="Zarejestruj się"
             >
@@ -60,6 +60,7 @@ function RegisterUser() {
                         id="reg-username"
                         type="text"
                         autoComplete="username"
+                        placeholder="Wpisz nazwę użytkownika"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -70,6 +71,7 @@ function RegisterUser() {
                         id="reg-fullname"
                         type="text"
                         autoComplete="name"
+                        placeholder="Wpisz imię i nazwisko"
                         value={fullname}
                         onChange={(e) => setFullname(e.target.value)}
                     />
@@ -80,6 +82,7 @@ function RegisterUser() {
                         id="reg-password"
                         type="password"
                         autoComplete="new-password"
+                        placeholder="Wpisz hasło"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -90,6 +93,7 @@ function RegisterUser() {
                         id="reg-email"
                         type="email"
                         autoComplete="email"
+                        placeholder="Wpisz e-mail"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />

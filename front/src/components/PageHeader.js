@@ -7,7 +7,7 @@ function PageHeader({ showBack = true, backLabel = 'Wróć' }) {
   const { themeOn, toggleTheme } = useThemeToggle();
 
   return (
-    <section className="heading">
+    <section className="heading nav-panel">
       <div className="heading-text">
         {showBack ? (
           <button

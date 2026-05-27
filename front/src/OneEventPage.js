@@ -102,7 +102,7 @@ function OneEventPage() {
 
                 <article className="choice-grid">
                     <div
-                        className="choice-image"
+                        className="choice-image choice-image-contain"
                         style={{ backgroundImage: `url(${img})` }}
                         role="img"
                         aria-label={event.name}

@@ -98,7 +98,24 @@ function UserPage() {
         <div className="page">
             <PageHeader />
             <section className="user-page">
-                <FormField title="Zmiana danych" onSubmit={handleChangeUser} cardClassName="data-card" contentClassName="data" formClassName="data-form-space" buttonText="Zapisz zmiany" headingTag="h2">
+                <FormField
+                    title="Zmiana danych"
+                    subtitle="Zaktualizuj swoje dane kontaktowe"
+                    icon={
+                        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path
+                                fill="currentColor"
+                                d="M12 12a4 4 0 1 0-4-4a4 4 0 0 0 4 4Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"
+                            />
+                        </svg>
+                    }
+                    onSubmit={handleChangeUser}
+                    cardClassName="account-card"
+                    contentClassName="data"
+                    formClassName="data-form-space"
+                    buttonText="Zapisz zmiany"
+                    headingTag="h2"
+                >
                             <div className="form-field">
                                 <label htmlFor="user-username" className="field-label">Nazwa użytkownika</label>
                                 <input
@@ -140,31 +157,76 @@ function UserPage() {
                                 />
                             </div>
                 </FormField>
-                <section className="data-card">
+                <section className="account-card">
                     <div className="profile">
-                        <h2 className="auth-panel-title">Profil użytkownika</h2>
+                        <div className="card-header">
+                            <div className="card-header-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" focusable="false">
+                                    <path
+                                        fill="currentColor"
+                                        d="M12 12a4 4 0 1 0-4-4a4 4 0 0 0 4 4Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"
+                                    />
+                                </svg>
+                            </div>
+                            <div className="card-header-text">
+                                <h2 className="auth-panel-title">Profil użytkownika</h2>
+                                <p className="auth-panel-subtitle">Twoje dane profilowe</p>
+                            </div>
+                        </div>
                         {userData ? (
-                            <section>
-                                <dl>
-                                    <dt className="eyebrow-tw" ><b>Nazwa użytkownika</b></dt>
-                                    <dd>{userData.username}</dd>
-    
-                                    <dt className="eyebrow-tw"><b>Imię i nazwisko</b></dt>
-                                    <dd>{userData.fullname}</dd>
-    
-                                    <dt className="eyebrow-tw"><b>E-mail</b></dt>
-                                    <dd>{userData.email}</dd>
-    
-                                    <dt className="eyebrow-tw"><b>Status konta</b></dt>
-                                    <dd>{userData.disabled ? "Zablokowane" : "Aktywne"}</dd>
-                                </dl>
-                            </section>
+                            <div className="profile-list">
+                                <div className="profile-row">
+                                    <div className="profile-row-text">
+                                        <div className="profile-row-label">Nazwa użytkownika</div>
+                                        <div className="profile-row-value">{userData.username || '—'}</div>
+                                    </div>
+                                </div>
+                                <div className="profile-row">
+                                    <div className="profile-row-text">
+                                        <div className="profile-row-label">Imię i nazwisko</div>
+                                        <div className="profile-row-value">{userData.fullname || '—'}</div>
+                                    </div>
+                                </div>
+                                <div className="profile-row">
+                                    <div className="profile-row-text">
+                                        <div className="profile-row-label">E-mail</div>
+                                        <div className="profile-row-value">{userData.email || '—'}</div>
+                                    </div>
+                                </div>
+                                <div className="profile-row">
+                                    <div className="profile-row-text">
+                                        <div className="profile-row-label">Status konta</div>
+                                        <div className="profile-row-value">
+                                            <span className={`status-pill ${userData.disabled ? 'is-off' : 'is-on'}`}>
+                                                {userData.disabled ? "Zablokowane" : "Aktywne"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         ) : (
                             <p className="muted">Ładowanie danych użytkownika…</p>
                         )}
                     </div>
                 </section>
-                <FormField title="Usuwanie konta" onSubmit={handleDeleteUser} contentClassName="delete" formClassName="delete-form-space"  buttonText="Usuń konto" headingTag="h2">
+                <FormField
+                    title="Usuwanie konta"
+                    subtitle="Trwale usuń swoje konto"
+                    icon={
+                        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path
+                                fill="currentColor"
+                                d="M12 2a10 10 0 0 0-10 10a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm1 14h-2v-2h2Zm0-4h-2V6h2Z"
+                            />
+                        </svg>
+                    }
+                    onSubmit={handleDeleteUser}
+                    cardClassName="account-card"
+                    contentClassName="delete"
+                    formClassName="delete-form-space"
+                    buttonText="Usuń konto"
+                    headingTag="h2"
+                >
                             <div className="form-field">
                                 <label htmlFor="delete-password" className="field-label">Potwierdź hasłem</label>
                                 <input
@@ -174,6 +236,9 @@ function UserPage() {
                                     value={deletePassword}
                                     onChange={(e) => setDeletePassword(e.target.value)}
                                 />
+                            </div>
+                            <div className="danger-note" role="note">
+                                <b>Uwaga:</b> Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną trwale usunięte.
                             </div>
                 </FormField>
             </section>

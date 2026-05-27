@@ -60,15 +60,17 @@ function LoginPage() {
             <FormField title="Logowanie"
                    onSubmit={handleLogin}
                    cardClassName="login-card"
-                   contentClassName="c"
+                   contentClassName="login"
                    formClassName="login-form-space"
                    buttonText="Zaloguj">
+            <p className="auth-panel-subtitle">Zaloguj się, aby kontynuować</p>
             <div className="form-field">
                 <label htmlFor="login-username" className="field-label">Nazwa użytkownika</label>
                 <input
                     id="login-username"
                     type="text"
                     autoComplete="username"
+                    placeholder="Wpisz nazwę użytkownika"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
@@ -79,6 +81,7 @@ function LoginPage() {
                     id="login-password"
                     type="password"
                     autoComplete="current-password"
+                    placeholder="Wpisz hasło"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
