@@ -189,7 +189,7 @@ async def read_events_search(
     city: Optional[str] = Query(None),
     date: Optional[str] = Query(None),
     keyword: Optional[str] = Query(None),
-    country: Optional[str] = Query(None),
+    country: Optional[str] = Query("PL"),
     size: int = Query(20, ge=1, le=50),
 ):
     if not (city or keyword or date):
