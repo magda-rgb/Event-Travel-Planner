@@ -67,7 +67,7 @@ async def tm_search_events(
         "locale": "*",
     }
     if city:
-        params["city"] = city
+        params["city"] = "Warsaw" if city.strip().lower() == "warszawa" else city
     if keyword:
         params["keyword"] = keyword
     if country_code:
