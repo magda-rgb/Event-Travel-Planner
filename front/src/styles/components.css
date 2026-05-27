@@ -224,8 +224,19 @@
 
   .search-form {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 1fr auto;
     gap: 12px;
+    color-scheme: light dark;
+  }
+
+  .search-form input[type="date"] {
+    min-width: 0;
+    cursor: text;
+  }
+
+  .search-form input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.6);
   }
 
   .search-form input {

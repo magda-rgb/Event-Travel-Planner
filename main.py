@@ -1,46 +1,42 @@
-import json
 from pathlib import Path
-from typing import Annotated, Dict, Any, Optional
+from typing import Annotated, Any, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, Depends, status, Query
-from pydantic import BaseModel
+import httpx
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi import HTTPException, status
-import os
-from dotenv import load_dotenv
+from pydantic import BaseModel
 from pymongo import MongoClient
+import os
 
-# Always load .env from the project directory (same folder as main.py).
+from providers import tm_get_event, tm_search_events
+
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "projekt_db")
 
-app= FastAPI()  
-client = MongoClient(MONGO_URI)
+app = FastAPI()
+
 try:
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
     client.admin.command("ping")
+    db = client[MONGO_DB]
+    users_collection = db["users"]
+    users_collection.create_index("username", unique=True)
     print("MongoDB connected")
 except Exception as e:
-    print(f"MongoDB connection error: {e}")
+    print(f"MongoDB unavailable: {e}")
+    client = None
+    db = None
+    users_collection = None
 
 
-db = client[MONGO_DB]
-users_collection = db["users"]
-events_collection = db["events"]
+def _require_mongo():
+    if users_collection is None:
+        raise HTTPException(status_code=503, detail="Brak polaczenia z MongoDB")
 
-users_collection.create_index("username", unique=True)
-
-EVENTS_FILE = "events.json"
-
-def load_events() -> Dict[str, Dict[str, Any]]:
-    with open(EVENTS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def save_events(events: Dict[str, Dict[str, Any]]):
-    with open(EVENTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(events, f, indent=2)
 
 def fake_hash_password(password:str):
     return "hash" + password
@@ -63,6 +59,7 @@ class UserInDB(BaseModel):
 
 class DeleteUserRequest(BaseModel):
     password: str
+
 
 #CORS Middleware
 app.add_middleware(
@@ -125,6 +122,7 @@ def fake_decode_token(token: str) -> Optional[UserInDB]:
     return get_user_by_id(token)
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserInDB:
+    _require_mongo()
     user = fake_decode_token(token)
     if not user:
         raise HTTPException(
@@ -141,19 +139,9 @@ async def get_current_active_user(
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-def matches(event_name:str, data: Dict[str, Any], q: str) -> bool:
-    haystack = " ".join([
-        event_name,
-        str(data.get("miejsce","")),
-        str(data.get("data","")),
-        str(data.get("rodzaj","")),
-        str(data.get("organizator","")),
-    ]).lower()
-    return q in haystack
-
-
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    _require_mongo()
     user_id = find_user_id_by_username(form_data.username)
     if not user_id:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
@@ -173,32 +161,56 @@ async def read_user_me(current_user: Annotated[UserInDB, Depends(get_current_act
     data.pop("hashed_password", None)
     return data
 
+async def _safe_tm_call(coro):
+    try:
+        return await coro
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 404:
+            raise HTTPException(status_code=404, detail="Wydarzenie nie znalezione")
+        raise HTTPException(status_code=502, detail=f"Blad Ticketmaster: {e.response.status_code}")
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"Ticketmaster nieosiagalny: {e}")
+
+
 @app.get("/events")
-async def read_events():
-    return load_events()
+async def read_events(
+    city: Optional[str] = Query(None),
+    keyword: Optional[str] = Query(None),
+    country: Optional[str] = Query("PL"),
+    size: int = Query(12, ge=1, le=50),
+):
+    events = await _safe_tm_call(
+        tm_search_events(city=city, keyword=keyword, country_code=country, size=size)
+    )
+    return {"events": events}
+
 
 @app.get("/events/search")
-async def read_events_search(q: str =Query(...,min_length=1)):
-    q_norm = q.strip().lower()
-    events = load_events()
+async def read_events_search(
+    city: Optional[str] = Query(None),
+    date: Optional[str] = Query(None),
+    keyword: Optional[str] = Query(None),
+    country: Optional[str] = Query(None),
+    size: int = Query(20, ge=1, le=50),
+):
+    if not (city or keyword or date):
+        raise HTTPException(status_code=400, detail="Podaj miasto, date lub fraze")
+    events = await _safe_tm_call(
+        tm_search_events(city=city, date_iso=date, keyword=keyword, country_code=country, size=size)
+    )
+    return {"events": events}
 
-    filtered_events = {
-        name: data
-        for name, data in events.items()
-        if matches(name,data, q_norm)
-    }
-    return filtered_events
 
-@app.get("/event")
-async def read_one_event(q: str = Query(..., min_length=1)):
-    events = load_events()
-    event = events.get(q)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-    return event
+@app.get("/events/{event_id}")
+async def read_one_event(event_id: str):
+    return await _safe_tm_call(tm_get_event(event_id))
+
 
 @app.post("/register")
 async def register_user(user: UserInput):
+    _require_mongo()
     if username_taken(user.username):
         raise HTTPException(status_code=400, detail="Username already registered")
 
@@ -216,6 +228,7 @@ async def register_user(user: UserInput):
 
 @app.delete("/delete_user")
 async def delete_user(password: DeleteUserRequest, token: Annotated[str, Depends(oauth2_scheme)]):
+    _require_mongo()
     user_id = token
     if not user_id:
         raise HTTPException(status_code=404, detail="User not found")
@@ -235,6 +248,7 @@ async def update_user(
         token: Annotated[str, Depends(oauth2_scheme)],
         user_input: UserInput,
 ):
+    _require_mongo()
     user_id = token
     user = users_collection.find_one({"_id": user_id})
     if not user:

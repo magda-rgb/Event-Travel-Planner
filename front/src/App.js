@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {Navigate, Outlet, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import EventsPage from './EventsPage';
-import { EVENTS_URL, fallbackImages, eventImageIndex  } from './constants';
+import { EVENTS_URL, fallbackImages, segmentImageIndex } from './constants';
 import useThemeToggle from './hooks/useThemeToggle';
 import LoginPage from './LoginPage';
 import {useAuth} from './AuthContext';
@@ -33,7 +33,8 @@ const heroSlides = [
 function HomePage({ events, isLoadingEvents, eventsError }) {
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [city, setCity] = useState('');
+    const [date, setDate] = useState('');
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
     const lastIndex = heroSlides.length - 1;
@@ -72,7 +73,11 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
     const handleSearch = (event) => {
         event.preventDefault();
-        navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+        const params = new URLSearchParams();
+        if (city.trim()) params.set('city', city.trim());
+        if (date) params.set('date', date);
+        if (!params.toString()) return;
+        navigate(`/search?${params.toString()}`);
     };
     
     const handleLogin = (event) => {
@@ -99,7 +104,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         "block w-full rounded-xl px-3 py-2 text-left text-sm text-[var(--text)] transition hover:bg-[var(--border-btn)]";
 
     const handleOneEvent = (id) => {
-        navigate(`/event?q=${encodeURIComponent(id)}`)
+        navigate(`/event/${encodeURIComponent(id)}`);
     };
 
     return (
@@ -268,10 +273,17 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     <form className="search-form" onSubmit={handleSearch}>
                         <input
                             type="text"
-                            placeholder="Wpisz “koncert” albo “Warszawa”"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            aria-label="Search destinations"
+                            placeholder="Miasto (np. Warszawa)"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            aria-label="Miasto"
+                        />
+                        <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            aria-label="Data (od tej daty wzwyż)"
+                            title="Wydarzenia od wybranej daty, najbliższe na górze"
                         />
                         <button type="submit">Szukaj</button>
                     </form>
@@ -280,10 +292,10 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
             <section className="choices">
                 <header className="section-header">
-                    <p className="eyebrow">Zaplanuj swój następny krok</p>
-                    <h2>Wybierz coś z ulubionych</h2>
+                    <p className="eyebrow">Co się dzieje</p>
+                    <h2>Najbliższe dzisiaj</h2>
                     <p className="muted">
-                        Trzy sprawdzone propozycje eventów do wyboru na start.
+                        Wydarzenia najbliższe dzisiejszej daty, posortowane od najszybszego.
                     </p>
                 </header>
                 {isLoadingEvents ? (
@@ -292,29 +304,35 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
                     <p className="muted">{eventsError}</p>
                 ) : featuredChoices.length ? (
                     <div className="choice-grid">
-                        {featuredChoices.map((choice) => (
-                            <article key={choice.id} className="choice-card">
-                                <div
-                                    className="choice-image"
-                                    style={{ backgroundImage: `url(${
-                                            fallbackImages[eventImageIndex[choice.rodzaj] ?? 0]
-                                        })` }}
-                                    role="img"
-                                    aria-label={choice.title}
-                                />
-                                <div className="choice-body">
-                                    <h3>{choice.title}</h3>
-                                    <p>{choice.blurb}</p>
-                                    <button 
-                                        type="button" 
-                                        className="ghost-btn"
-                                    onClick={() => handleOneEvent(choice.id)}>
-                                        Zobacz więcej!
-                                    </button>
-                                </div>
-                                
-                            </article>
-                        ))}
+                        {featuredChoices.map((choice) => {
+                            const img = choice.image || fallbackImages[
+                                segmentImageIndex[choice.segment] ?? 0
+                            ];
+                            const subtitle = [choice.city, choice.date]
+                                .filter(Boolean)
+                                .join(' • ');
+                            return (
+                                <article key={choice.id} className="choice-card">
+                                    <div
+                                        className="choice-image"
+                                        style={{ backgroundImage: `url(${img})` }}
+                                        role="img"
+                                        aria-label={choice.name}
+                                    />
+                                    <div className="choice-body">
+                                        <h3>{choice.name}</h3>
+                                        <p>{subtitle}</p>
+                                        <button
+                                            type="button"
+                                            className="ghost-btn"
+                                            onClick={() => handleOneEvent(choice.id)}
+                                        >
+                                            Zobacz więcej!
+                                        </button>
+                                    </div>
+                                </article>
+                            );
+                        })}
                     </div>
                 ) : (
                     <p className="muted">Obecnie brak dostępnych wydarzeń.</p>
@@ -343,7 +361,7 @@ function App() {
     useEffect(() => {
         let isMounted = true;
         setIsLoadingEvents(true);
-        fetch(EVENTS_URL)
+        fetch(`${EVENTS_URL}?size=6`)
             .then((res) => {
                 if (!res.ok) {
                     throw new Error(`Request failed with ${res.status}`);
@@ -352,25 +370,14 @@ function App() {
             })
             .then((data) => {
                 if (!isMounted) return;
-                if (!data || typeof data !== 'object') {
-                    throw new Error('Unexpected response shape');
-                }
-                const entries = Object.entries(data);
-                const mapped = entries.map(([key, ev], idx) => ({
-                    id: key,
-                    title: ev.miejsce,
-                    blurb: `${ev.rodzaj} - ${ev.data}`,
-                    rodzaj: ev.rodzaj
-
-
-                }));
-                setEvents(mapped);
+                const list = Array.isArray(data?.events) ? data.events : [];
+                setEvents(list);
                 setEventsError('');
             })
             .catch((err) => {
                 if (!isMounted) return;
                 console.error(err);
-                setEventsError('Could not load events right now.');
+                setEventsError('Nie można teraz załadować wydarzeń.');
                 setEvents([]);
             })
             .finally(() => {
@@ -397,7 +404,7 @@ function App() {
             
             <Route path="/login" element={<LoginPage />} />
             
-            <Route path="/event" element={<OneEventPage/>} />
+            <Route path="/event/:id" element={<OneEventPage/>} />
             
             <Route path="/register" element={<RegisterUser />} />
             
