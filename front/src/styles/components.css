@@ -79,6 +79,16 @@
     color: var(--text);
   }
 
+  .navbar-brand {
+    text-transform: none;
+    letter-spacing: -0.02em;
+    font-weight: 900;
+    font-size: 16px;
+    color: var(--text);
+    margin-right: 10px;
+  }
+
+
   .login-name {
     display: flex;
     align-items: center;

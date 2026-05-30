@@ -118,6 +118,9 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
         <div className="page">
             <section className="heading nav-panel">
                 <div className="heading-one">
+            {!user ? (
+                <div className="navbar-brand">Event Travel Planner</div>
+            ) : null}
             {user ? (
                 <>
                     <div className="login-name">
@@ -129,7 +132,7 @@ function HomePage({ events, isLoadingEvents, eventsError }) {
 
                 </div>
                 <div className="heading-two">
-                <section className="buttons-sth">  
+                <section className="buttons-sth">
                     {/*<button type="button" className="ghost-btn">*/}
                     {/*    ENG/PL*/}
                     {/*</button>*/}

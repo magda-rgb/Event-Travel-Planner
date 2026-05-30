@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import useThemeToggle from '../hooks/useThemeToggle';
+import { useAuth } from '../AuthContext';
 
 
 function PageHeader({ showBack = true, backLabel = 'Wróć' }) {
   const navigate = useNavigate();
   const { themeOn, toggleTheme } = useThemeToggle();
+  const { user } = useAuth();
 
   return (
     <section className="heading nav-panel">
@@ -21,6 +23,7 @@ function PageHeader({ showBack = true, backLabel = 'Wróć' }) {
       </div>
       <div className="heading-two">
         <section className="buttons-sth">
+          <div className="navbar-brand">Event Travel Planner</div>
           <button
             type="button"
             className={`inline-flex h-[30px] w-14 items-center rounded-full p-[3px] transition-colors duration-200 ${
