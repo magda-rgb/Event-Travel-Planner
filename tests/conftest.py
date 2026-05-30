@@ -6,6 +6,8 @@ import os
 
 os.environ.setdefault("MONGO_URI", "mongodb://localhost:27017")
 os.environ["MONGO_DB"] = "projekt_test"
+os.environ.setdefault("TICKETMASTER_API_KEY", "test-tm-key")
+os.environ.setdefault("GOOGLE_MAPS_API_KEY", "test-google-key")
 
 import pytest
 from fastapi.testclient import TestClient

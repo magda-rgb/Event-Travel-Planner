@@ -10,11 +10,11 @@ function RegisterUser() {
     const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
-
-    
+    const [errorMsg, setErrorMsg] = useState('');
 
     async function handleRegister(e) {
         e.preventDefault();
+        setErrorMsg('');
         try {
             const response = await fetch(REGISTER_URL, {
                 method: 'POST',
@@ -29,16 +29,16 @@ function RegisterUser() {
                     "Content-Type": "application/json",
                 }
             });
+            const data = await response.json().catch(() => ({}));
+
             if (!response.ok) {
-                throw new Error(response.statusText);
+                const msg = data?.detail || response.statusText || 'Rejestracja nie powiodła się';
+                throw new Error(msg);
             }
-
-            await response.json();
-
 
             navigate('/');
         } catch (error) {
-            console.error(error.message);
+            setErrorMsg(error.message);
         }
 
     }
@@ -99,6 +99,11 @@ function RegisterUser() {
                     />
                 </div>
             </FormField>
+            {errorMsg ? (
+                <p role="alert" className="mt-4 text-center text-sm text-red-600">
+                    {errorMsg}
+                </p>
+            ) : null}
         </div>
 
     )
