@@ -1,6 +1,16 @@
 {
+  "name": "event-travel-planner",
+  "private": true,
+  "scripts": {
+    "e2e": "playwright test -c e2e/playwright.config.ts",
+    "e2e:ui": "playwright test -c e2e/playwright.config.ts --ui",
+    "e2e:report": "playwright show-report"
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
   }
 }
